@@ -1,0 +1,50 @@
+# WARNING: Config Modification Requires APP to Restart!
+
+# DOCU: APP port listener
+
+port: 8888
+
+# DOCU: Enable Profiler allows developer to visualize background process
+# by means of sending session-data, database queries, get and post variables.  
+
+enable_profiler: false
+
+# DOCU: Enable Global XSS Filtering 
+# NOTE: Doesn't work well inside an async function.
+
+global_xss_filter: false
+
+# DOCU: Setup Session Data values
+
+session_data:
+  secret: itsasecret
+  name: saitamaTheStrongest
+  resave: false
+  saveUninitialized: true
+  cookie: 
+    maxAge: 60000
+    secure: false
+
+# DOCU: Setup database config
+#  name: <RDBMSName> name of database ex. mysql, posgresql, postgres
+#  host: <hostName> default (localhost / 127.0.0.1)
+#  user: <userName> default (root, postgres)
+#  password: <password> default (root / password)
+#  database: <schema> of Schema / Database
+#  port: <portNumber> default (3306, 5432)
+
+database:
+  name: mysql
+  host: localhost
+  user: root
+  password: password
+  database: foriou
+  port: 3306
+
+# DOCU: Enable the redis server for faster loading and validation
+
+redis_server:
+  enable: false
+  host: localhost
+  port: 6379
+  ttl: 86400

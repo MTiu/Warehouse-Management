@@ -1,0 +1,88 @@
+<style>
+    table#profiler-table, th.profiler-th, tr.profiler-tr, td.profiler-td {
+        text-align: start;
+        border: 1px solid black;
+        padding: 10px;
+        background-color: white;
+        border-radius: 5px;
+    }
+
+    table#profiler-table {
+        border: none;
+        background-color: transparent;
+        padding: 20px;
+        font-family: 'Courier New', Courier, monospace;
+    }
+    
+        th.profiler-th {
+            background-color: orangered;
+            color: white;
+            font-weight: bold;
+        }
+</style>
+<% if(Object.keys(log).length !== 0) { %>
+<table id="profiler-table">
+        <tr class="profiler-tr">
+            <th class="profiler-th" >Profiler is Enabled!</th>
+        </tr>
+    <tr class="profiler-tr">
+        <th class="profiler-th">Session Data</th>
+    </tr>
+<%  if(log['session-data']) {
+    for(const key in log['session-data']) {
+        if(log['session-data'][key]) {
+            for(const new_key in log['session-data'][key]) {
+                if(log['session-data'][key][new_key] !== undefined && log['post-variables'][key] !== '') {
+%>
+    <tr class="profiler-tr"><td class="profiler-td"><b><%= key %></b> : <b><%= new_key %></b> : <%= log['session-data'][key][new_key] %></td></tr>
+<%
+        } else {
+%>
+    <tr class="profiler-tr"><td class="profiler-td"><b><%= key %></b> : <%= log['session-data'][key] %></td></tr>
+<%
+                } 
+            }
+        }
+    }
+}
+%>
+    </tr>
+    <tr class="profiler-tr">
+        <th class="profiler-th">GET Variables</th>
+    </tr>
+<%  if(log['get-variables']) {
+    for(const key in log['get-variables']) {
+        if(log['get-variables'][key] !== undefined && log['post-variables'][key] !== '') {
+%>
+    <tr class="profiler-tr"><td class="profiler-td"><b><%= key %></b> : <%= log['get-variables'][key] %></td></tr>
+<%
+        }  
+    }
+}
+%>
+    </tr>
+    <tr class="profiler-tr">
+        <th class="profiler-th">POST Variables</th>
+    </tr>
+<%  if(log['post-variables']) {
+    for(const key in log['post-variables']) {
+        if(log['post-variables'][key] !== undefined && log['post-variables'][key] !== '') {
+%>
+    <tr class="profiler-tr"><td class="profiler-td"><b><%= key %></b> : <%= log['post-variables'][key] %></td></tr>
+<%
+        }
+    }
+}
+%>
+    <tr class="profiler-tr">
+        <th class="profiler-th">Database Queries</th>
+<%  if(log['db-queries']) {
+    for(let i = 0; i < log['db-queries'].length; i++) {
+%>
+    <tr class="profiler-tr"><td class="profiler-td"><%= log['db-queries'][i] %></td></tr>
+<%
+    }
+}}
+%>
+    </tr>
+</table>

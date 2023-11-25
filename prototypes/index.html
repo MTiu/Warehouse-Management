@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+      * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          /* outline: 1px solid red; */
+      }
+
+      *::before,
+      *:after {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+      }
+
+      body {
+          font-size: 16px;
+          background-color: #74A608;
+          color: white;
+          font-family: 'Lato', sans-serif;
+      }
+
+      #main-container {
+          display: flex;
+
+      }
+
+      #left-side {
+          background-color: #234006;
+          height: 100vh;
+          border-radius: 0px 10px 10px 0px;
+          padding: 20px;
+      }
+
+      .image-container {
+          color: white;
+      }
+
+      .image-container>a {
+          color: inherit;
+      }
+
+      #right-side {
+          margin-left: 20px;
+          display: flex;
+          flex-direction: column;
+          height: 100vh;
+      }
+
+      #upper {
+          padding-top: 20px;
+          flex-basis: 60%;
+      }
+
+      #upper-left {
+          padding: 10px;
+          border-radius: 20px 20px 0px 0px;
+      }
+
+      #upper-left-header {
+          display: flex;
+          padding-left: 20px;
+          gap: 50%;
+          align-items: center;
+      }
+
+      .itemTable {
+          width: 95%;
+          max-height: 300px;
+          overflow: auto;
+          color: black;
+          background-color: #EBF21B;
+          padding: 10px;
+          margin: 20px;
+          border-radius: 10px;
+      }
+
+      .itemTable>table {
+          height: 100%;
+          width: 100%;
+          border-collapse: collapse;
+          border-radius: 30px;
+          border-style: hidden;
+      }
+
+      .itemTable>th,
+      td {
+          border: 1px solid black;
+          border-radius: 10px;
+          padding: 8px;
+          text-align: left;
+      }
+
+
+      .form-control {
+          position: relative;
+          width: 190px;
+      }
+
+      .form-control input {
+          background-color: transparent;
+          border: 0;
+          border-bottom: 2px white solid;
+          display: block;
+          width: 100%;
+          padding: 15px 0;
+          font-size: 18px;
+          color: white;
+      }
+
+      .form-control input:focus,
+      .form-control input:valid {
+          outline: 0;
+          border-bottom-color: white;
+      }
+
+      .form-control label {
+          position: absolute;
+          top: 15px;
+          left: 0;
+          pointer-events: none;
+      }
+
+      .form-control label span {
+          display: inline-block;
+          font-size: 18px;
+          min-width: 5px;
+          color: white;
+          transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      }
+
+      .form-control input:focus+label span,
+      .form-control input:valid+label span {
+          color: white;
+          transform: translateY(-20px);
+      }
+
+      #upper-right {
+          color: black;
+          background-color: white;
+
+      }
+
+
+
+      #lower {
+          padding-bottom: 20px;
+          flex-basis: 40%;
+      }
+
+      #lower-left {
+          padding: 20px;
+          border-radius: 00px 00px 20px 20px;
+      }
+
+      #quadrant-list {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+      }
+
+      #quadrant-list>.quadrant {
+          display: inline-block;
+          padding: 10px;
+          cursor: pointer;
+          border-radius: 5px;
+      }
+
+      #lower-right {
+          background-color: #EBF21B;
+          color: black;
+          margin-top: 10px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+      }
+
+      .history-buttons-tab {
+          padding: 5px;
+          height: 40px;
+          width: 95%;
+          margin-top: 10px;
+          display: flex;
+          justify-content: space-evenly;
+          border: 1px solid black;
+          background-color: black;
+          border-radius: 50px;
+
+      }
+
+      .history-button {
+          cursor: pointer;
+          display: inline-block;
+          text-align: center;
+          line-height: 100%;
+          color: white;
+          border-radius: 100px;
+          padding: 5px;
+      }
+
+      .history-button>input {
+          appearance: none;
+          border-radius: 50%;
+      }
+
+      #one {
+          background-color: #EBF21B;
+          color: black;
+      }
+
+      #two,
+      #three {
+
+          color: white;
+      }
+
+      #upper,
+      #lower {
+          display: flex;
+          height: 50%;
+          width: 85vw;
+          gap: 10px;
+      }
+
+      #upper-left,
+      #lower-left {
+          flex-basis: 65%;
+          background-color: #262626;
+      }
+
+      #upper-right,
+      #lower-right {
+          flex-basis: 35%;
+          border-radius: 10px;
+      }
+            
+    </style>
+  </head>
+  <body>
+    <div id="main-container">
+      <div id="left-side">
+        <div class="image-container">
+          <a href="">
+            <img src="" alt="" />
+            <p>Dashboard</p>
+          </a>
+        </div>
+        <div class="image-container">
+          <a href="">
+            <img src="" alt="" />
+            <p>View</p>
+          </a>
+        </div>
+        <div class="image-container">
+          <a href="">
+            <img src="" alt="" />
+            <p>Manual</p>
+          </a>
+        </div>
+      </div>
+      <div id="right-side">
+        <div id="upper">
+          <div id="upper-left">
+            <h1>Warehouse Management Dashboard</h1>
+            <div class="header-buttons">
+              <button>Add Items</button>
+              <button>Remove Items</button>
+              <button>Copy Items</button>
+            </div>
+            <div id="upper-left-header">
+              <h2>Item List</h2>
+  
+              <div class="form-control">
+                <input type="value" required="" />
+                <label>
+                  <span style="transition-delay: 0ms">S</span>
+                  <span style="transition-delay: 50ms">e</span>
+                  <span style="transition-delay: 100ms">a</span>
+                  <span style="transition-delay: 150ms">r</span>
+                  <span style="transition-delay: 200ms">c</span>
+                  <span style="transition-delay: 250ms">h</span>
+                </label>
+              </div>
+
+            </div>
+            
+            <div class="itemTable">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Item Name</th>
+                    <th>Quantity</th>
+                  </tr>
+                </thead>
+                <tbody id="item-list">
+                  <tr>
+                    <td>Screw Driver</td>
+                    <td>18</td>
+                  </tr>
+                  <tr>
+                    <td>Screws </td>
+                    <td>40</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+          <div id="upper-right">
+            <div id="quadrant-usage">
+              <h1>Quadrant Usage</h1>
+              <div id="quadrant-meter"></div>
+              <div id="quadrant-meter-items"></div>
+            </div>
+          </div>
+        </div>
+        <div id="lower">
+          <div id="lower-left">
+            <h1>List of Quadrants</h1>
+
+            <div class="header-buttons">
+              <button>Add Quadrant</button>
+              <button>Remove Quadrant</button>
+              <button>Copy Quadrant</button>
+            </div>
+
+              <div id="quadrant-list">
+                <label class="quadrant">
+                  <input type="radio" name="quadrant" value="1" /> Quadrant 1
+                </label>
+                <label class="quadrant">
+                  <input type="radio" name="quadrant" value="2" /> Quadrant 2
+                </label>
+                <label class="quadrant">
+                  <input type="radio" name="quadrant" value="3" /> Quadrant 3
+                </label>
+                <label class="quadrant">
+                  <input type="radio" name="quadrant" value="4" /> Quadrant 4
+                </label>
+                <label class="quadrant">
+                  <input type="radio" name="quadrant" value="5" /> Quadrant 5
+                </label>
+                <label class="quadrant">
+                  <input type="radio" name="quadrant" value="6" /> Quadrant 6
+                </label>
+                <label class="quadrant">
+                  <input type="radio" name="quadrant" value="7" /> Quadrant 7
+                </label>
+                <label class="quadrant">
+                  <input type="radio" name="quadrant" value="8" /> Quadrant 8
+                </label>
+              </div>
+            
+          </div>
+          <div id="lower-right">
+            <div class="history-buttons-tab">
+              <label class="history-button" id="one">
+                <input type="radio" name="toggle" > Item History
+              </label>  
+              <label class="history-button" id="two">
+                <input type="radio" name="toggle" > Removed Items
+              </label>  
+              <label class="history-button" id="three">
+                <input type="radio" name="toggle" > Stored Items
+              </label>  
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+          var buttons = document.getElementsByClassName("history-button");
+          var arr = [...buttons];
+
+          arr.forEach((element, index) => {
+          element.addEventListener("click", () => {
+          element.style.color = "black";
+          element.style.backgroundColor = "yellow";
+
+    
+          arr
+            .filter(function (item) {
+              return item != element;
+            })
+            .forEach((item) => {
+              item.style.color = "white";
+              item.style.backgroundColor = "black";
+            });
+        });
+      });
+    </script>
+  </body>
+</html>
+home.html
+6 KB
