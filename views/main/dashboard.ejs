@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/scripts/warehouse.js"></script>
+    <script src="/scripts/dashboard.js"></script>
+    <script src="/scripts/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+      * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          /* outline: 1px solid red; */
+      }
+
+      *::before,
+      *:after {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+      }
+
+      body {
+          font-size: 16px;
+          background-color: teal;
+          color: white;
+          font-family: 'Lato', sans-serif;
+      }
+
+      #main-container {
+          display: flex;
+
+      }
+
+      #left-side {
+          background-color:  #262626;
+          height: 100vh;
+          /* border-radius: 0px 10px 10px 0px; */
+          padding: 20px;
+      }
+
+      .image-container a {
+        color: white;
+        font-size: 19px;
+      }
+
+
+      #right-side {
+          margin-left: 20px;
+          display: flex;
+          flex-direction: column;
+          height: 100vh;
+      }
+
+      #upper {
+          padding-top: 20px;
+          flex-basis: 60%;
+      }
+
+      #upper-left {
+          padding: 10px;
+          border-radius: 20px 20px 0px 0px;
+      }
+
+      #upper-left-header {
+          display: flex;
+          padding-left: 20px;
+          gap: 50%;
+          align-items: center;
+      }
+
+      .itemTable {
+          width: 95%;
+          max-height: 380px;
+          overflow: auto;
+          color: black;
+          background-color: lightgray;
+          margin: 20px;
+          border-radius: 10px;
+      }
+
+      .itemTable>table {
+        height: 100%;
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 10px;
+        border-style: hidden;
+      }
+      
+      .itemTable>table th {
+        padding: 10px 20px;
+        font-size: 19px;
+        background-color: darkslategray;
+        color: white;
+      }
+
+      .itemTable>table td {
+        padding: 10px 20px;
+      }
+      .itemTable>table tr:nth-child(even) {
+        background-color: white;
+      }
+
+      .itemTable>th,
+      td {
+          border: 1px solid black;
+          padding: 8px;
+          text-align: left;
+      }
+
+
+      #search {
+          position: relative;
+          width: 190px;
+      }
+
+      #search input {
+          background-color: transparent;
+          border: 0;
+          border-bottom: 2px white solid;
+          display: block;
+          width: 100%;
+          padding: 15px 0;
+          font-size: 18px;
+          color: white;
+      }
+
+      #search input:focus,
+      #search input:valid {
+          outline: 0;
+          border-bottom-color: white;
+      }
+
+      #search label {
+          position: absolute;
+          top: 15px;
+          left: 0;
+          pointer-events: none;
+      }
+
+      #search label span {
+          display: inline-block;
+          font-size: 18px;
+          min-width: 5px;
+          color: white;
+          transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      }
+
+      #search input:focus+label span,
+      #search input:valid+label span {
+          color: white;
+          transform: translateY(-20px);
+      }
+
+      #upper-right {
+          color: black;
+          background-color: white;
+
+      }
+
+
+
+      #lower {
+          padding-bottom: 20px;
+          flex-basis: 40%;
+      }
+
+      #lower-left {
+        padding: 20px;
+        border-radius: 00px 00px 20px 20px;
+      }
+      #lower-left h1 {
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid white;
+      }
+
+      #quadrant_list {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 15px;
+      }
+
+      #quadrant_list>.quadrant {
+          display: inline-block;
+          padding: 10px;
+          cursor: pointer;
+          border-radius: 5px;
+      }
+
+      #lower-right {
+          background-color: lightgray;
+          color: black;
+          margin-top: 10px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+      }
+      #lower-right h4 {
+        margin: 40px;
+        font-size: 21px;
+        margin-bottom: 40px;
+      }
+
+      .history-buttons-tab {
+          padding: 5px;
+          height: 40px;
+          width: 95%;
+          margin-top: 10px;
+          display: flex;
+          justify-content: space-evenly;
+          border: 1px solid black;
+          background-color: black;
+          border-radius: 50px;
+
+      }
+
+      .history-button {
+          cursor: pointer;
+          display: inline-block;
+          text-align: center;
+          line-height: 100%;
+          color: white;
+          border-radius: 100px;
+          padding: 5px;
+      }
+
+      .history-button>input {
+          appearance: none;
+          border-radius: 50%;
+      }
+
+      #one {
+          background-color: #EBF21B;
+          color: black;
+      }
+
+      #two,
+      #three {
+
+          color: white;
+      }
+
+      #upper,
+      #lower {
+          display: flex;
+          height: 50%;
+          width: 90vw;
+          gap: 15px;
+      }
+
+      #upper-left,
+      #lower-left {
+          flex-basis: 75%;
+          background-color: #262626;
+      }
+
+      #upper-right,
+      #lower-right {
+          flex-basis: 25%;
+          border-radius: 10px;
+      }
+
+      #upper-left > h1 {
+        margin: 10px;
+        padding: 10px;
+        border-bottom: 1px solid white;
+      }
+            
+      #mask {
+        background-color: black;
+        opacity: 0.4;
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        z-index: 90;
+        display: none;
+      }
+
+
+      #update_popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 400px;
+        height: 500px;
+        border: 1px solid black;
+        border-radius: 10px;
+        padding: 20px;
+        z-index: 100;
+        background-color: white;
+        color: black;
+        display: none;
+      }
+      #update_popup #container {
+        height: 100%;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      #add_product_popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 400px;
+        height: 800px;
+        border: 1px solid black;
+        border-radius: 10px;
+        padding: 20px;
+        z-index: 100;
+        background-color: white;
+        color: black;
+        display: none;
+      }
+      #add_product_popup h4, #update_popup h4 {
+        margin-bottom: 10px; 
+      }
+      #add_product_popup h2, #update_popup h2 {
+        margin-bottom: 10px; 
+        padding-bottom: 10px;
+        border-bottom: 1px solid black;
+      }
+
+      #button_container, #use_of_materials, #type_of_materials {
+        margin-bottom: 20px;
+      }
+      #use_of_materials, #type_of_materials {
+        display: flex;
+        flex-direction: column;
+      }
+        #use_of_materials label, #use_of_materials h4, #type_of_materials label, #type_of_materials h4 {
+          margin-bottom: 10px;
+        }
+
+      #button_container {
+        display: flex;
+        justify-content: space-evenly;
+      }
+        #button_container button#automatic_add {
+          padding: 10px 20px;
+          background-color: white;
+          color: black;
+          width: 40%;
+          cursor: pointer;
+          border-radius: 5px;
+        }
+        #button_container button#manual_add {
+          width: 40%;
+          padding: 10px 20px;
+          background-color: black;
+          cursor: pointer;
+          color: white;
+          border-radius: 5px;
+        }
+
+      #product_name, #product_quantity, #description, #update_product_name, #update_product_quantity, #update_description {
+        margin-bottom: 10px;
+      }
+      #product_name input, #product_quantity input, #description input, #update_product_name input, #update_product_quantity input, #update_description input {
+        padding: 5px 10px;
+        width: 50%;
+        margin-bottom: 10px;
+      }
+      #add_product_popup #container {
+        height: 100%;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .close_button {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        cursor: pointer;
+        width: 20px;
+        height: 20px;
+        font-size: 16px;
+      }
+
+      #add_product_popup #quadrants {
+        display: none;
+      }
+      #quadrants > label {
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      #add_button_submit, #update_button_submit {
+        width: max-content;
+        background-color: #74A608;
+        color: white;
+        font-weight: 700;
+        text-align: center;
+        padding: 10px 20px;
+        margin: auto;
+        cursor: pointer;
+        display: block;
+      }
+
+      #add_product {
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-weight: 700;
+        background-color: skyblue;
+        color: black;
+        margin-left: 20px;
+      }
+
+      .update_product, .remove_product {
+        text-align: center;
+        width: 10%;
+        cursor: pointer;
+      }
+
+      #quadrant_id {
+        padding: 5px 10px;
+        width: 50%;
+      }
+
+      #chart_container {
+        width: 80%;
+        display: block;
+        margin: auto;
+      }
+
+      #quadrant_usage h4 {
+        font-size: 26px;
+        text-align: center;
+        margin: 20px;
+        margin-bottom: 40px;
+      }
+
+      #tmp {
+        font-size: 19px;
+      }
+      #tmp li {
+        margin-bottom: 10px;
+      }
+
+      .quadrant_checkbox {
+        display: none;
+      }
+      #quadrant_list .quadrant {
+        width: 200px;
+        height: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- #Number 2 Feature - Use of Material (Building Material, Tools, Plumbing, Fasteners, Others)
+    #Number 3 Feature - Type of Material (0 lagay kapag di building material, Wood, Steel, Concrete, Ceramic) -->
+
+    <div id="mask"></div>
+    <div id="update_popup">
+      <div id="container">
+        <div class="close_button">×</div>
+        <h2>Update Product</h2>
+        <div id="product_name">
+          <h4>Quadrant Name:</h4>
+          <select id="quadrant_id">
+            <% for(let i = 0; i < quadrants.length; i++) { %>
+              <option value="<%= quadrants[i].id %>"><%= quadrants[i].name %></option>
+            <% } %>
+          </select>
+        </div>
+        <input type="hidden" name="update_product_id" id="update_product_id" />
+        <div id="update_product_name">
+          <h4>Product Name:</h4>
+          <input type="text" name="update_product_name" placeholder="Product Name" />
+        </div>
+        <div id="update_product_quantity">
+          <h4>Quantity:</h4>
+          <input type="number" name="update_quantity" placeholder="Quantity" />
+        </div>
+        <div id="update_description">
+          <h4>Description:</h4>
+          <input type="text" name="update_description" placeholder="Description" />
+        </div>
+        <button id="update_button_submit">SUBMIT</button>
+      </div>
+    </div>
+    <div id="add_product_popup">
+      <div id="container">
+        <div class="close_button">×</div>
+        <h2>Add Product</h2>
+        <h4>Select Method:</h4>
+        <div id="button_container">
+          <button id="automatic_add">AUTOMATIC</button>
+          <button id="manual_add">MANUAL</button>
+        </div>
+        <div id="product_name">
+          <h4>Product Name:</h4>
+          <input type="text" name="product_name" placeholder="Product Name" />
+        </div>
+        <div id="product_quantity">
+          <h4>Quantity:</h4>
+          <input type="number" name="quantity" placeholder="Quantity" />
+        </div>
+        <div id="description">
+          <h4>Description:</h4>
+          <input type="text" name="description" placeholder="Description" />
+        </div>
+
+        <div id="quadrants">
+          <h4>Select Quadrant:</h4>
+          <label for="add_product_quadrant1">
+            <input type="radio" name="add_product_quadrant" class="quadrant_radio_button" value="1" id="add_product_quadrant1" /> Quadrant 1
+          </label>
+          <label for="add_product_quadrant2">
+            <input type="radio" name="add_product_quadrant" class="quadrant_radio_button" value="2" id="add_product_quadrant2" /> Quadrant 2
+          </label>
+          <label for="add_product_quadrant3">
+            <input type="radio" name="add_product_quadrant" class="quadrant_radio_button" value="3" id="add_product_quadrant3" /> Quadrant 3
+          </label>
+          <label for="add_product_quadrant4">
+            <input type="radio" name="add_product_quadrant" class="quadrant_radio_button" value="4" id="add_product_quadrant4" /> Quadrant 4
+          </label>
+          <label for="add_product_quadrant5">
+            <input type="radio" name="add_product_quadrant" class="quadrant_radio_button" value="5" id="add_product_quadrant5" /> Quadrant 5
+          </label>
+          <label for="add_product_quadrant6">
+            <input type="radio" name="add_product_quadrant" class="quadrant_radio_button" value="6" id="add_product_quadrant6" /> Quadrant 6
+          </label>
+          <label for="add_product_quadrant7">
+            <input type="radio" name="add_product_quadrant" class="quadrant_radio_button" value="7" id="add_product_quadrant7" /> Quadrant 7
+          </label>
+          <label for="add_product_quadrant8">
+            <input type="radio" name="add_product_quadrant" class="quadrant_radio_button" value="8" id="add_product_quadrant8" /> Quadrant 8
+          </label>
+        </div>
+
+        <div id="use_of_materials">
+          <h4>Use of Materials:</h4>
+          <label for="uom_materials">
+            <input type="radio" name="use_of_materials" class="use_of_material_radio_button" value="1" id="uom_materials" /> Building Materials
+          </label>
+          <label for="uom_tools">
+            <input type="radio" name="use_of_materials" class="use_of_material_radio_button" value="2" id="uom_tools" /> Tools
+          </label>
+          <label for="uom_plumbing">
+            <input type="radio" name="use_of_materials" class="use_of_material_radio_button" value="3" id="uom_plumbing" /> Plumbing
+          </label>
+          <label for="uom_fasteners">
+            <input type="radio" name="use_of_materials" class="use_of_material_radio_button" value="4" id="uom_fasteners" /> Fasteners
+          </label>
+          <label for="uom_others">
+            <input type="radio" name="use_of_materials" class="use_of_material_radio_button" value="5" id="uom_others" /> Others
+          </label>
+        </div>
+        <div id="type_of_materials">
+          <h4>Type of Materials:</h4>
+          <label for="tom_wood">
+            <input type="radio" name="type_of_materials" class="type_of_material_radio_button" value="1" id="tom_wood" /> Wood
+          </label>
+          <label for="tom_steel">
+            <input type="radio" name="type_of_materials" class="type_of_material_radio_button" value="2" id="tom_steel" /> Steel
+          </label>
+          <label for="tom_concrete">
+            <input type="radio" name="type_of_materials" class="type_of_material_radio_button" value="3" id="tom_concrete" /> Concrete
+          </label>
+          <label for="tom_ceramic">
+            <input type="radio" name="type_of_materials" class="type_of_material_radio_button" value="4" id="tom_ceramic" /> Ceramic
+          </label>
+        </div>
+        <button id="add_button_submit">SUBMIT</button>
+      </div>
+    </div>
+
+    <div id="main-container">
+      <div id="left-side">
+        <div class="image-container">
+          <a href="">
+            <img src="" alt="" />
+            <p>Dashboard</p>
+          </a>
+        </div>
+        <div class="image-container">
+          <a href="">
+            <img src="" alt="" />
+            <p>View</p>
+          </a>
+        </div>
+        <div class="image-container">
+          <a href="">
+            <img src="" alt="" />
+            <p>Manual</p>
+          </a>
+        </div>
+      </div>
+      <div id="right-side">
+        <div id="upper">
+          <div id="upper-left">
+            <h1>Warehouse Management Dashboard</h1>
+            <div id="upper-left-header">
+              <h2>Item List<button id="add_product">Add Product</button></h2>
+  
+              <div id="search">
+                <input type="value" required="" value="" />
+                <label>
+                  <span style="transition-delay: 0ms">S</span>
+                  <span style="transition-delay: 50ms">e</span>
+                  <span style="transition-delay: 100ms">a</span>
+                  <span style="transition-delay: 150ms">r</span>
+                  <span style="transition-delay: 200ms">c</span>
+                  <span style="transition-delay: 250ms">h</span>
+                </label>
+              </div>
+
+            </div>
+            
+            <div class="itemTable">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Quadrant</th>
+                    <th>Item Name</th>
+                    <th>Update</th>
+                    <th>Remove</th>
+                    <th>Quantity</th>
+                  </tr>
+                </thead>
+                <tbody id="item_list">
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+          <div id="upper-right">
+            <div id="quadrant_usage">
+              <h4>Warehouse Space</h4>
+              <div id="chart_container">
+                <canvas id="myDonutChart" width="300" height="300"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="lower">
+          <div id="lower-left">
+            <h1>List of Quadrants</h1>
+            <div id="quadrant_list">
+              <% for(let i = 0; i < quadrants.length; i++) { %>
+                <label class="quadrant" for="quadrant<%= quadrants[i].id %>" style="background-image: linear-gradient(90deg, darkslategray 65%, darkgray 35%);">
+                  <input class="quadrant_checkbox" checked type="checkbox" name="quadrant" value="<%= quadrants[i].id %>" id="quadrant<%= quadrants[i].id %>" /> <%= quadrants[i].name %>
+                </label>
+              <% } %>
+            </div>
+          </div>
+          <div id="lower-right">
+            <h4>Top moving products</h4>
+            <ol id="tmp">
+              <li>WOODY3</li>
+              <li>random</li>
+              <li>bricks4</li>
+              <li>Hollow Blocks</li>
+              <li>Tile 1</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

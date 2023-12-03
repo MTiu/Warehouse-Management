@@ -12,6 +12,7 @@
     "mysql2": "^3.6.0",
     "node": "^17.7.2",
     "pg-promise": "^10.11.1",
+    "querystring": "^0.2.1",
     "redis": "^4.0.6",
     "xss-filters": "^1.2.7"
   }

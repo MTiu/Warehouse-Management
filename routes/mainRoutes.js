@@ -10,7 +10,7 @@ const express = require("express");
  * to Router.
  */
 
-const productRoutes = express.Router();
+const mainRoutes = express.Router();
 
 /**
  * DOCU: Imports Controller Module
@@ -18,25 +18,22 @@ const productRoutes = express.Router();
  * No need to create new object.
  */
 
-const productController = require("../controllers/productController");
+const mainController = require("../controllers/mainController");
 
 /**
  * DOCU: Using the Object from module controller
  * Routes the User from specific request.
  */
 
-productRoutes.get("/product/:product_id", productController.product);
-productRoutes.get("/shop", productController.shop);
-productRoutes.post("/search", productController.search);
-productRoutes.get("/products/getSortedProducts", productController.getSortedProducts);
-productRoutes.post("/create/category", productController.createCategory);
-productRoutes.post("/create/product", productController.createProduct);
-productRoutes.post("/create/product-categories", productController.createProductCategories);
-productRoutes.get("/admin/products", productController.adminProducts);
-productRoutes.get("/admin/product/:product_id", productController.adminProduct);
+mainRoutes.get("/", mainController.dashboard);
+mainRoutes.get("/dashboard", mainController.dashboard);
+mainRoutes.post("/dashboard", mainController.getQuadrantProducts);
+mainRoutes.post("/product/add", mainController.addProduct);
+mainRoutes.post("/product/remove", mainController.removeProduct);
+mainRoutes.post("/product/update", mainController.updateProduct);
 
 /**
  * DOCU: Export Router Module to App.js
  */
 
-module.exports = productRoutes; 
+module.exports = mainRoutes; 

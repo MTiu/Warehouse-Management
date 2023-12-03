@@ -169,3 +169,21 @@ app.use(middleware.logger);
 app.listen(config.port, () => {
     console.log(`http://localhost:${ config.port }/`);
 });
+
+
+
+
+/**
+ * 
+    SETUP DATABASE CHIXXX
+    PRODUCTS FORM
+    QUADRANTS FORM
+    SPACE FORM
+    BACKLOGS
+
+    CREATE POPUPS
+    DISPLAY PRODUCTS CHIXXX
+    DISPLAY QUADRANTS
+    DISPLAY QUADRANT USAGE
+    HISTORY
+*/
