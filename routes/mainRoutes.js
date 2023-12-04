@@ -27,6 +27,7 @@ const mainController = require("../controllers/mainController");
 
 mainRoutes.get("/", mainController.dashboard);
 mainRoutes.get("/dashboard", mainController.dashboard);
+mainRoutes.get("/view", mainController.view);
 mainRoutes.post("/dashboard", mainController.getQuadrantProducts);
 mainRoutes.post("/product/add", mainController.addProduct);
 mainRoutes.post("/product/remove", mainController.removeProduct);

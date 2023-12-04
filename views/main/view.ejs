@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+  <style>
+    * {
+      /* outline: 1px solid red; */
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body > .container {
+      display: flex;
+    }
+
+    nav {
+      background-color:  #262626;
+      height: 100vh;
+      padding: 20px;
+      width: max-content;
+      display: flex;
+      flex-direction: column;
+    }
+      nav .image_container a {
+        color: white;
+        font-size: 19px;
+      }
+    #main {
+      width: 100%;
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+      background-color: teal;
+    }
+      #main > .left {
+        width: 65%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 95%;
+      }
+        #main > .left > .top {
+          height: 32%;
+          border: 1px solid black;
+          border-radius: 10px;
+          padding: 20px;
+          background-color: #262626;
+        }
+          #main > .left > .top > h2 {
+            color: white;
+            margin-bottom: 10px;
+          }
+          #main > .left > .top > #chart_container {
+            height: 80%;
+            background-color: white;
+          }
+        #main > .left .bottom {
+          height: 65%;
+          max-height: 600px;
+          border: 1px solid black;
+          border-radius: 10px;
+          padding: 20px;
+          background-color: #262626;
+          overflow-y: scroll;
+        }
+          #main > .left .bottom > h2 {
+            color: white;
+            margin-bottom: 10px;
+          }
+          #main > .left .bottom > table {
+            max-height: 10%;
+            /* display: block; */
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 10px;
+            border-style: hidden;
+            background-color: lightgray;
+          }
+            #main > .left .bottom > table th {
+              padding: 10px 20px;
+              font-size: 19px;
+              background-color: darkslategray;
+              color: white;
+              width: auto;
+            }
+            #main > .left .bottom > table .view_product {
+              text-align: center;
+              width: 20px;
+            }
+            #main > .left .bottom > table td {
+              padding: 10px 20px;
+            }
+            #main > .left .bottom > table tr:nth-child(even) {
+              background-color: white;
+            }
+            #main > .left .bottom > th, td {
+                border: 1px solid black;
+                padding: 8px;
+                text-align: left;
+            }
+
+      #main > .right {
+        width: 30%;
+        height: 95%;
+        border: 1px solid black;
+        border-radius: 10px;
+        padding: 20px;
+        background-color: white;
+      }
+    
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav>
+      <div class="image_container">
+        <a href="/dashboard">
+          <img src="" alt="" />
+          <p>Dashboard</p>
+        </a>
+      </div>
+      <div class="image_container">
+        <a href="/view">
+          <img src="" alt="" />
+          <p>View</p>
+        </a>
+      </div>
+      <div class="image_container">
+        <a href="/manual">
+          <img src="" alt="" />
+          <p>Manual</p>
+        </a>
+      </div>
+    </nav>
+    <div id="main">
+      <div class="left">
+        <div class="top">
+          <h2>Product Movement</h2>
+          <div id="chart_container">
+            <canvas id="productLogsChart"></canvas>
+          </div>
+        </div>
+        <div class="bottom">
+          <h2>Critical Items</h2>
+          <table>
+            <thead>
+              <th>Quadrant</th>
+              <th>Item Name</th>
+              <th>View</th>
+              <th>Quantity</th>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="right">
+
+      </div>
+    </div>
+  </div>
+  
+  <div id="quadrant_list" style="display: none;">
+    <% for(let i = 0; i < quadrants.length; i++) { %>
+      <label class="quadrant" for="quadrant<%= quadrants[i].id %>" style="background-image: linear-gradient(90deg, darkslategray 65%, darkgray 35%);">
+        <input class="quadrant_checkbox" checked type="checkbox" name="quadrant" value="<%= quadrants[i].id %>" id="quadrant<%= quadrants[i].id %>" /> <%= quadrants[i].name %>
+      </label>
+    <% } %>
+  </div>
+
+  <script>
+    // Sample data for product logs
+    const productLogsData = {
+      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+      productAdds: [3500, 1200, 1500, 1000, 2400, 1200],
+      productRemoves: [1515, 684, 1051, 1042, 1612, 911]
+    };
+
+    // Get the canvas element
+    const ctx = document.getElementById('productLogsChart').getContext('2d');
+
+    // Create the chart
+    const productLogsChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: productLogsData.labels,
+        datasets: [
+          {
+            label: 'Adds',
+            data: productLogsData.productAdds,
+            borderColor: 'darkgreen',
+            backgroundColor: 'lime',
+            borderWidth: 2
+          },
+          {
+            label: 'Removes',
+            data: productLogsData.productRemoves,
+            borderColor: 'darkred',
+            backgroundColor: 'red', 
+            borderWidth: 2
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        title: {
+          display: true,
+          text: 'Product Adds and Removes Over Time'
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Warehouse Movement'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Months'
+            }
+          }
+        }
+      }
+    });
+
+    let PRODUCTS = [];
+
+    function updateProductList(products) {
+      let html = "";
+
+      products.forEach(product => {
+        html += `
+        <tr>
+          <td class="quadrant">${ product.quadrant_name }</td>
+          <td class="product_title">${ product.name }</td>
+          <td class="view_product" product-id="${ product.id }">👁️</td>
+          <td>${ product.quantity }</td>
+        </tr>
+        `;
+      });
+
+      if(!products.length) {
+        html = "<tr><td>No Product Display</td></tr>"
+      }
+
+      $('tbody').html(html);
+    }
+
+    function getProducts() {
+      let quadrant_list_array_string = "";
+        
+      $('.quadrant_checkbox').each((index, checkbox) => {
+        if(checkbox.checked) {
+          quadrant_list_array_string += checkbox.value + ",";
+        }
+      });
+
+      if(!quadrant_list_array_string) {
+        quadrant_list_array_string = "0 "; // DO NOT REMOVE EXTRA SPACE
+      }
+
+      $.post("/dashboard", { quadrant_list: quadrant_list_array_string.substring(0, quadrant_list_array_string.length - 1), query_string: "" }, (data) => {
+        PRODUCTS = data.products;
+        PRODUCTS = PRODUCTS.sort((a, b) => a.quantity - b.quantity);
+
+        updateProductList(PRODUCTS);
+      });
+    }
+
+    $(document).ready(() => {
+      getProducts();
+    });
+  </script>
+</body>
+</html>

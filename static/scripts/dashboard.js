@@ -20,7 +20,6 @@ function updateProductList(products) {
   }
 
   $('#item_list').html(html);
-
 }
 
 function getProducts() {

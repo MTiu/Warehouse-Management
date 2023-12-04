@@ -15,6 +15,17 @@ class MainController {
 
         res.render('../views/main/dashboard', DATA);
     }
+    
+    async view(req, res) { 
+        const PRODUCTS = await db.getProducts();
+        const QUADRANTS = await db.getQuadrants();
+        const DATA = {
+            products: PRODUCTS,
+            quadrants: QUADRANTS 
+        };
+
+        res.render('../views/main/view', DATA);
+    }
 
     async getQuadrantProducts(req, res) {
         const PRODUCTS = await db.getQuadrantProducts(req);
