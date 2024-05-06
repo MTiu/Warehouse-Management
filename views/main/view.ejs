@@ -113,6 +113,36 @@
         padding: 20px;
         background-color: white;
       }
+        #main > .right > .container {
+          padding-top: 20px;
+        }
+        #main > .right > .container > label {
+          margin-bottom: 20px;
+          display: block;
+        } 
+          #main > .right > .container > label > h4 {
+            font-size: 21px;
+          }
+          #main > .right > .container > label > input {
+            font-size: 16px;
+            border: none; 
+            width: 100%;
+            padding: 10px 20px;
+          }
+          #main > .right > .container > label > select {
+            font-size: 16px;
+            border: none; 
+            width: 100%;
+            padding: 10px 20px;
+          }
+          #main > .right > .container > label > textarea {
+            width: 100%;
+            font-size: 16px;
+            min-height: max-content;
+            border: none;
+            resize: none;
+            padding: 10px 20px;
+          }
     
   </style>
 </head>
@@ -161,7 +191,29 @@
         </div>
       </div>
       <div class="right">
-
+        <div class="container">
+          <h2>EDIT PRODUCT</h2>
+          <label for="title">
+            <h4>Title: </h4>
+            <input name="title" type="text" id="title" value="THIS IS A SAMPLE TITLE" />
+          </label>
+          <label for="description">
+            <h4>Description: </h4>
+            <textarea oninput="auto_grow(this)" name="description" id="description">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatibus asperiores corporis fugiat, ipsa ipsam nulla illum provident praesentium blanditiis veniam ratione adipisci accusantium, omnis modi veritatis voluptas maxime. Dolor repudiandae est doloremque. Perspiciatis quas distinctio ipsam doloribus veniam. Culpa magni dignissimos id tempore vel ipsam rem quo velit perferendis necessitatibus.</textarea>
+          </label>
+          <label for="stocks">
+            <h4>Quantity: </h4>
+            <input type="number" name="stocks" id="stocks" current-stocks="50" value="100" />
+          </label>
+          <label for="quadrant">
+            <h4>Quadrant Name:</h4>
+            <select id="quadrant_id">
+              <% for(let i = 0; i < quadrants.length; i++) { %>
+                <option value="<%= quadrants[i].id %>"><%= quadrants[i].name %></option>
+              <% } %>
+            </select>
+          </label>
+        </div>
       </div>
     </div>
   </div>
@@ -276,9 +328,37 @@
       });
     }
 
+    function auto_grow(element) {
+      element.style.height = "5px";
+      element.style.height = (element.scrollHeight) + "px";
+    }
+
+    // function getProduct(product_id) {
+    //   const quadrant_id = $('#quadrant_id').val();
+    //   const product_name = $('#update_product_name input').val();
+    //   const product_quantity = $('#update_product_quantity input').val();
+    //   const product_description = $('#update_description input').val();
+    //   const product_id = $('#update_product_id').val();
+
+    //   const DATA = {
+    //     quadrant_id: quadrant_id,
+    //     product_name: product_name,
+    //     product_quantity: product_quantity,
+    //     product_id: product_id,
+    //     product_description: product_description
+    //   };
+
+    //   $.post('/product/update', DATA, () => {
+    //     getProducts();
+    //     $('#update_popup, #add_product_popup, #mask').hide();
+    //   });
+    // }
+
     $(document).ready(() => {
       getProducts();
+      auto_grow(document.getElementById('description'));
     });
+
   </script>
 </body>
 </html>

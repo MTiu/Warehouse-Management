@@ -240,5 +240,4 @@ $(document).ready(() => {
 
     updateProductList(PRODUCTS);
   })
-
 });
