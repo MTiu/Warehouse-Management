@@ -1,11 +1,3 @@
-/**
- * Author: Arjhay Frias
- * Created_at: 03/31/2022
- * Updated_at: 04/09/2022
- * 
- * Description: Config.js Handles all the Database Configuration
- * 
- */
 
 const fs = require('fs');
 const yaml = require('js-yaml');

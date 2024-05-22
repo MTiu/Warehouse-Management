@@ -1,11 +1,3 @@
-/**
- * Author: Arjhay Frias
- * Created_at: 03/31/2022
- * Updated_at: 04/09/2022
- * 
- * Description: Universal Query allows user to migrate to multiple database without changing codebase 
- * Supports mySQL & postgreSQL 
- */
 
  const db = require('../../../connection');
  const fs = require('fs');

@@ -1,14 +1,4 @@
 /**
- * Author: Arjhay Frias
- * Created_at: 03/31/2022
- * Updated_at: 04/09/2022
- * 
- * Description: App.js Manages the server's configuration
- * And loads specific Packages / Modules
- * 
- */
-
-/**
  * DOCU: Loads the Express Module in order for us
  * to set the app.
  */

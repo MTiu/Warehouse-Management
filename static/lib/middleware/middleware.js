@@ -1,11 +1,3 @@
-/**
- * Author: Arjhay Frias
- * Created_at: 03/31/2022
- * Updated_at: 04/09/2022
- * 
- * Description: Middleware.js Setup Profiler data and setup Global XSS Filtering
- * 
- */
 
 const fs = require('fs');
 const yaml = require('js-yaml');
