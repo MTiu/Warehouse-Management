@@ -6,145 +6,7 @@
   <title>View</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
-  <style>
-    * {
-      /* outline: 1px solid red; */
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body > .container {
-      display: flex;
-    }
-
-    nav {
-      background-color:  #262626;
-      height: 100vh;
-      padding: 20px;
-      width: max-content;
-      display: flex;
-      flex-direction: column;
-    }
-      nav .image_container a {
-        color: white;
-        font-size: 19px;
-      }
-    #main {
-      width: 100%;
-      display: flex;
-      justify-content: space-evenly;
-      align-items: center;
-      background-color: teal;
-    }
-      #main > .left {
-        width: 65%;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        height: 95%;
-      }
-        #main > .left > .top {
-          height: 32%;
-          border: 1px solid black;
-          border-radius: 10px;
-          padding: 20px;
-          background-color: #262626;
-        }
-          #main > .left > .top > h2 {
-            color: white;
-            margin-bottom: 10px;
-          }
-          #main > .left > .top > #chart_container {
-            height: 80%;
-            background-color: white;
-          }
-        #main > .left .bottom {
-          height: 65%;
-          max-height: 600px;
-          border: 1px solid black;
-          border-radius: 10px;
-          padding: 20px;
-          background-color: #262626;
-          overflow-y: scroll;
-        }
-          #main > .left .bottom > h2 {
-            color: white;
-            margin-bottom: 10px;
-          }
-          #main > .left .bottom > table {
-            max-height: 10%;
-            /* display: block; */
-            width: 100%;
-            border-collapse: collapse;
-            border-radius: 10px;
-            border-style: hidden;
-            background-color: lightgray;
-          }
-            #main > .left .bottom > table th {
-              padding: 10px 20px;
-              font-size: 19px;
-              background-color: darkslategray;
-              color: white;
-              width: auto;
-            }
-            #main > .left .bottom > table .view_product {
-              text-align: center;
-              width: 20px;
-            }
-            #main > .left .bottom > table td {
-              padding: 10px 20px;
-            }
-            #main > .left .bottom > table tr:nth-child(even) {
-              background-color: white;
-            }
-            #main > .left .bottom > th, td {
-                border: 1px solid black;
-                padding: 8px;
-                text-align: left;
-            }
-
-      #main > .right {
-        width: 30%;
-        height: 95%;
-        border: 1px solid black;
-        border-radius: 10px;
-        padding: 20px;
-        background-color: white;
-      }
-        #main > .right > .container {
-          padding-top: 20px;
-        }
-        #main > .right > .container > label {
-          margin-bottom: 20px;
-          display: block;
-        } 
-          #main > .right > .container > label > h4 {
-            font-size: 21px;
-          }
-          #main > .right > .container > label > input {
-            font-size: 16px;
-            border: none; 
-            width: 100%;
-            padding: 10px 20px;
-          }
-          #main > .right > .container > label > select {
-            font-size: 16px;
-            border: none; 
-            width: 100%;
-            padding: 10px 20px;
-          }
-          #main > .right > .container > label > textarea {
-            width: 100%;
-            font-size: 16px;
-            min-height: max-content;
-            border: none;
-            resize: none;
-            padding: 10px 20px;
-          }
-    
-  </style>
+  <link rel="stylesheet" href="stylesheets/view.css">
 </head>
 <body>
   <div class="container">
@@ -159,12 +21,6 @@
         <a href="/view">
           <img src="" alt="" />
           <p>View</p>
-        </a>
-      </div>
-      <div class="image_container">
-        <a href="/manual">
-          <img src="" alt="" />
-          <p>Manual</p>
         </a>
       </div>
     </nav>
@@ -229,7 +85,7 @@
   <script>
     // Sample data for product logs
     const productLogsData = {
-      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul","Aug","Sep","Oct","Nov","Dec"],
       productAdds: [3500, 1200, 1500, 1000, 2400, 1200],
       productRemoves: [1515, 684, 1051, 1042, 1612, 911]
     };

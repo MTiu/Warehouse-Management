@@ -1,10 +1,50 @@
 let PRODUCTS = [];
 
-function updateProductList(products) {
-  let html = "";
+function updateLabelBackground(checkbox) {
+  const label = $(checkbox).closest('label');
+  if ($(checkbox).is(':checked')) {
+    label.css({
+      'background-image': 'linear-gradient(90deg, darkslategray 80%, darkgray 20%)', // Revert to default
+      'color': '' // Revert to default
+    });
+  } else {
+    label.css({
+      'background-image': 'linear-gradient(90deg, gray 80%, darkgray 20%)', // Black with 50% opacity
+      'color': 'white' // Optional: Change text color for better contrast
+    });
+  }
+}
 
-  products.forEach(product => {
-    html += `
+function initEventHandlers(){
+  $('.quadrant_checkbox').each(function() {
+    updateLabelBackground(this);
+  });
+
+  $('.quadrant_checkbox').on('change', function() {
+    getProducts();
+    updateLabelBackground(this);
+  });
+}
+
+function uncheckAllCheckboxes() {
+  $('.quadrant_checkbox').each(function() {
+    $(this).prop('checked', false);
+    updateLabelBackground(this); // Update background after unchecking
+  });
+}
+
+function checkAllCheckboxes() {
+  $('.quadrant_checkbox').each(function() {
+    $(this).prop('checked', true);
+    updateLabelBackground(this); // Update background after checking
+  });
+}
+
+function updateProductList(data) {
+  let itemHTML = "";
+
+  data.products.forEach(product => {
+    itemHTML += `
     <tr>
       <td class="quadrant">${ product.quadrant_name }</td>
       <td class="product_title">${ product.name }</td>
@@ -15,11 +55,29 @@ function updateProductList(products) {
     `;
   });
 
-  if(!products.length) {
-    html = "<tr><td>No Product Display</td></tr>"
+  if(!data.products.length) {
+    itemHTML = "<tr><td>No Product Display</td></tr>"
   }
 
-  $('#item_list').html(html);
+  $('#item_list').html(itemHTML);
+}
+
+function updateQuadrantList(data) {
+  let quadrantHTML = "";
+    data.quadrants.forEach(quadrant => {
+      quadrantHTML += `
+      <label class="quadrant" for="quadrant${ quadrant.id }">
+        <input class="quadrant_checkbox" checked type="checkbox" name="quadrant" value="${ quadrant.id }" id="quadrant${ quadrant.id }" /> <h4>${ quadrant.name }</h4>
+        <h4>Free Space: ${ quadrant.free_space }</h4>
+        <div>
+          <button class="delete quadrant_button" value="${ quadrant.id }">Delete</button>
+          <button class="update quadrant_button" quadrant-id="${ quadrant.id }" quadrant-name="${ quadrant.name }" quadrant-total-space="${ quadrant.total_space }">Update</button>
+        </div>
+      </label>
+      `
+    })
+  $('#quadrant_list').html(quadrantHTML);
+  initEventHandlers();
 }
 
 function getProducts() {
@@ -36,19 +94,35 @@ function getProducts() {
   }
 
   $.post("/dashboard", { quadrant_list: quadrant_list_array_string.substring(0, quadrant_list_array_string.length - 1), query_string: $('#search input').val() }, (data) => {
-    PRODUCTS = data.products;
-
-    updateProductList(PRODUCTS);
+    updateProductList(data);
   });
 }
 
 $(document).ready(() => {
   // $('#quadrant_list') // todo
   getProducts();
+  initEventHandlers();
 
-  $(".quadrant_checkbox").on("change", () => {
-    getProducts();
-  });
+  $('#add_quadrant_button_submit').click((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const DATA = {
+      name: $('#quadrant_name > input').val(),
+      total_space: $('#quadrant_total_space > input').val(),
+    }
+
+    $.post('/quadrant/add', DATA, (data) => {
+      getProducts();
+    });
+
+    $.post("/quadrant", (data) => {
+      updateQuadrantList(data);
+      getProducts();
+    });
+
+    $('#update_popup, #add_product_popup, #add_quadrant_popup, #mask').hide();
+  })
 
   $('#add_button_submit').click((e) => {
     // DO MACHINE LEARNING
@@ -111,6 +185,11 @@ $(document).ready(() => {
       getProducts();
     });
 
+    $.post("/quadrant", (data) => {
+      updateQuadrantList(data);
+      getProducts();
+    });
+
     $('#update_popup, #add_product_popup, #mask').hide();
   });
 
@@ -119,8 +198,22 @@ $(document).ready(() => {
     $('#type_of_materials').css("display", "none");
   })
 
+  $('#deselect_button').on('click', function() {
+    uncheckAllCheckboxes();
+    getProducts();
+  });
+
+  $('#select_all_button').on('click', function() {
+    checkAllCheckboxes()
+    getProducts();
+  });
+
+  $('#add_quadrant').click(() => {
+    $('#add_quadrant_popup, #mask').show();
+  })
+
   $('.close_button').click(() => {
-    $('#update_popup, #add_product_popup, #mask').hide();
+    $('#update_popup, #update_quadrant_popup, #add_product_popup, #add_quadrant_popup, #mask').hide();
   })
 
   $('#manual_add').click(() => {
@@ -154,6 +247,19 @@ $(document).ready(() => {
     }
   });
 
+  $(document).on('click', '.delete', (e) => {
+    if(confirm("Are you sure you want to remove this quadrant and all of its products?")) {
+      const QUADRANT_ID = $(e.target).val();
+
+      $.post('/quadrant/remove', {quadrant_id: QUADRANT_ID }, () =>{
+        $.post("/quadrant", (data) => {
+          updateQuadrantList(data);
+          getProducts();
+        });
+      })
+    }
+  });
+
   $(document).on('click', '.update_product', (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -173,6 +279,20 @@ $(document).ready(() => {
     $('#update_product_quantity input').val(product_quantity);
     $('#update_description input').val(product_description);
     $('#update_product_id').val(product_id);
+  });
+
+  $(document).on('click', '.update.quadrant_button', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    $('#update_quadrant_popup, #mask').show();
+
+    let quadrant_name = $(e.target).attr('quadrant-name');
+    let quadrant_id = $(e.target).attr('quadrant-id');
+    let quadrant_total_space = $(e.target).attr('quadrant-total-space');
+
+    $('#update_quadrant_name input').val(quadrant_name);
+    $('#update_quadrant_id').val(quadrant_id);
+    $('#update_quadrant_total_space input').val(quadrant_total_space);
   });
 
   $('#update_button_submit').click(() => {
@@ -195,6 +315,28 @@ $(document).ready(() => {
       $('#update_popup, #add_product_popup, #mask').hide();
     });
   });
+
+  $('#update_quadrant_button_submit').click((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const DATA = {
+      id: $('#update_quadrant_id').val(),
+      name: $('#update_quadrant_name > input').val(),
+      total_space: $('#update_quadrant_total_space > input').val(),
+    }
+
+    $.post('/quadrant/update', DATA, (data) => {
+      getProducts();
+    });
+
+    $.post("/quadrant", (data) => {
+      updateQuadrantList(data);
+      getProducts();
+    });
+
+    $('#update_popup, #update_quadrant_popup, #mask').hide();
+  })
 
   $(document).on('change', '#search input', () => {
     console.log("ASD");

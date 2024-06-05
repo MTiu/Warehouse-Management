@@ -37,7 +37,7 @@ database:
   name: mysql
   host: localhost
   user: root
-  password: password
+  password: admin
   database: warehouse #schema
   port: 3306
 

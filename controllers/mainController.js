@@ -29,7 +29,20 @@ class MainController {
 
     async getQuadrantProducts(req, res) {
         const PRODUCTS = await db.getQuadrantProducts(req);
-        const DATA = { products: PRODUCTS };
+        const QUADRANTS = await db.getQuadrants();
+        const DATA = {
+            products: PRODUCTS,
+            quadrants: QUADRANTS 
+        };
+        
+        res.json(DATA);
+    }
+
+    async getQuadrants(req, res) {
+        const QUADRANTS = await db.getQuadrants();
+        const DATA = {
+            quadrants: QUADRANTS 
+        };
         
         res.json(DATA);
     }
@@ -37,6 +50,15 @@ class MainController {
     async addProduct(req, res) {
         try {
             db.addProduct(req);
+            res.json({status: 0});
+        } catch(e) {
+            res.json({status: 1});
+        }
+    }
+
+    async addQuadrant(req, res) {
+        try {
+            db.addQuadrant(req);
             res.json({status: 0});
         } catch(e) {
             res.json({status: 1});
@@ -52,9 +74,27 @@ class MainController {
         }
     }
 
+    async removeQuadrant(req, res) {
+        try {
+            db.removeQuadrant(req);
+            res.json({status: 0});
+        } catch(e) {
+            res.json({status: 1});
+        }
+    }
+
     async updateProduct(req, res) {
         try {
             db.updateProduct(req);
+            res.json({status: 0});
+        } catch(e) {
+            res.json({status: 1});
+        }
+    }
+
+    async updateQuadrant(req, res) {
+        try {
+            db.updateQuadrant(req);
             res.json({status: 0});
         } catch(e) {
             res.json({status: 1});

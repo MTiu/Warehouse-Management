@@ -32,6 +32,10 @@ mainRoutes.post("/dashboard", mainController.getQuadrantProducts);
 mainRoutes.post("/product/add", mainController.addProduct);
 mainRoutes.post("/product/remove", mainController.removeProduct);
 mainRoutes.post("/product/update", mainController.updateProduct);
+mainRoutes.post("/quadrant/add", mainController.addQuadrant);
+mainRoutes.post("/quadrant", mainController.getQuadrants);
+mainRoutes.post("/quadrant/remove", mainController.removeQuadrant);
+mainRoutes.post("/quadrant/update", mainController.updateQuadrant);
 
 /**
  * DOCU: Export Router Module to App.js
