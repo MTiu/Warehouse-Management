@@ -29,12 +29,8 @@ class MainController {
 
     async getQuadrantProducts(req, res) {
         const PRODUCTS = await db.getQuadrantProducts(req);
-        const QUADRANTS = await db.getQuadrants();
-        const DATA = {
-            products: PRODUCTS,
-            quadrants: QUADRANTS 
-        };
-        
+        const DATA = { products: PRODUCTS };
+
         res.json(DATA);
     }
 

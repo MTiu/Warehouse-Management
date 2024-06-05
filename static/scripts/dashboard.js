@@ -40,10 +40,9 @@ function checkAllCheckboxes() {
   });
 }
 
-function updateProductList(data) {
+function updateProductList(products) {
   let itemHTML = "";
-
-  data.products.forEach(product => {
+  products.forEach(product => {
     itemHTML += `
     <tr>
       <td class="quadrant">${ product.quadrant_name }</td>
@@ -55,7 +54,7 @@ function updateProductList(data) {
     `;
   });
 
-  if(!data.products.length) {
+  if(!products.length) {
     itemHTML = "<tr><td>No Product Display</td></tr>"
   }
 
@@ -94,7 +93,9 @@ function getProducts() {
   }
 
   $.post("/dashboard", { quadrant_list: quadrant_list_array_string.substring(0, quadrant_list_array_string.length - 1), query_string: $('#search input').val() }, (data) => {
-    updateProductList(data);
+    PRODUCTS = data.products;
+
+    updateProductList(PRODUCTS);
   });
 }
 
