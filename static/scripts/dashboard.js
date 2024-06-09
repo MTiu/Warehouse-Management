@@ -48,7 +48,7 @@ function updateProductList(products) {
       <td class="quadrant">${ product.quadrant_name }</td>
       <td class="product_title">${ product.name }</td>
       <td class="update_product" product-description="${ product.description }" product-id="${ product.id }" product-quadrant-name="${ product.quadrant_name }" product-name="${ product.name }" product-quantity="${ product.quantity }" >✏️</td>
-      <td class="remove_product" product-id="${ product.id }">❌</td>
+      <td class="remove_product" product-id="${ product.id }" product-quantity=${ product.quantity } product-quadrant-id="${product.quadrant_id}">❌</td>
       <td>${ product.quantity }</td>
     </tr>
     `;
@@ -63,20 +63,37 @@ function updateProductList(products) {
 
 function updateQuadrantList(data) {
   let quadrantHTML = "";
-    data.quadrants.forEach(quadrant => {
-      quadrantHTML += `
-      <label class="quadrant" for="quadrant${ quadrant.id }">
-        <input class="quadrant_checkbox" checked type="checkbox" name="quadrant" value="${ quadrant.id }" id="quadrant${ quadrant.id }" /> <h4>${ quadrant.name }</h4>
-        <h4>Free Space: ${ quadrant.free_space }</h4>
-        <div>
-          <button class="delete quadrant_button" value="${ quadrant.id }">Delete</button>
-          <button class="update quadrant_button" quadrant-id="${ quadrant.id }" quadrant-name="${ quadrant.name }" quadrant-total-space="${ quadrant.total_space }">Update</button>
-        </div>
+  let updateQuadrantHTML = "";
+  let addQuadrantHTML = "<h4>Select Quadrant:</h4>";
+  data.quadrants.forEach(quadrant => {
+    quadrantHTML += `
+    <label class="quadrant" for="quadrant${quadrant.id}">
+      <input class="quadrant_checkbox" checked type="checkbox" name="quadrant" value="${quadrant.id}" id="quadrant${quadrant.id}" /> <h4>${quadrant.name}</h4>
+      <h4>Free Space: ${quadrant.free_space}</h4>
+      <div>
+        ${quadrant.id > 8 ? `<button class="delete quadrant_button" value="${quadrant.id}">Delete</button>` : ''}
+        <button class="update quadrant_button" quadrant-id="${quadrant.id}" quadrant-name="${quadrant.name}" quadrant-total-space="${quadrant.total_space}">Update</button>
+      </div>
+    </label>
+    `;
+    })
+  data.quadrants.forEach(quadrant => {
+    updateQuadrantHTML += `
+      <option value="${ quadrant.id }">${ quadrant.name }</option>
+    `;
+    })
+  data.quadrants.forEach(quadrant => {
+    addQuadrantHTML += `
+      <label for="add_product_quadrant${ quadrant.id }">
+        <input type="radio" name="add_product_quadrant" class="quadrant_radio_button" value="${ quadrant.id }" id="add_product_quadrant${ quadrant.id }" /> ${ quadrant.name }
       </label>
-      `
+    `;
     })
   $('#quadrant_list').html(quadrantHTML);
+  $('#quadrant_id').html(updateQuadrantHTML);
+  $('#quadrants').html(addQuadrantHTML);
   initEventHandlers();
+  getChart();
 }
 
 function getProducts() {
@@ -97,6 +114,19 @@ function getProducts() {
 
     updateProductList(PRODUCTS);
   });
+
+  $.post("/products/top", (data) => {
+    const TOPPRODUCTS = data.top_products;
+    let tmpHTML = "";
+    TOPPRODUCTS.forEach(product => {
+      tmpHTML += `
+        <li> ${product.name}</li>
+      `
+    })
+    $('#tmp').html(tmpHTML);
+  })
+
+  getChart();
 }
 
 $(document).ready(() => {
@@ -241,9 +271,13 @@ $(document).ready(() => {
   $(document).on('click', '.remove_product', (e) => {
     if(confirm("Are you sure you want to remove this product?")) {
       const PRODUCT_ID = $(e.target).attr("product-id");
-      
-      $.post('/product/remove', { product_id: PRODUCT_ID }, () => {
-        getProducts();
+      const PRODUCT_QUANTITY = $(e.target).attr("product-quantity");
+      const QUADRANT_ID = $(e.target).attr("product-quadrant-id")
+      $.post('/product/remove', { product_id: PRODUCT_ID, product_quantity: PRODUCT_QUANTITY, quadrant_id: QUADRANT_ID }, () => {
+        $.post("/quadrant", (data) => {
+          updateQuadrantList(data);
+          getProducts();
+        });
       });
     }
   });
@@ -290,7 +324,7 @@ $(document).ready(() => {
     let quadrant_name = $(e.target).attr('quadrant-name');
     let quadrant_id = $(e.target).attr('quadrant-id');
     let quadrant_total_space = $(e.target).attr('quadrant-total-space');
-
+    
     $('#update_quadrant_name input').val(quadrant_name);
     $('#update_quadrant_id').val(quadrant_id);
     $('#update_quadrant_total_space input').val(quadrant_total_space);
@@ -312,10 +346,61 @@ $(document).ready(() => {
     };
 
     $.post('/product/update', DATA, () => {
-      getProducts();
-      $('#update_popup, #add_product_popup, #mask').hide();
+      // Delay the quadrant fetch by 5 seconds
+      
+      setTimeout(() => {
+        $.post("/quadrant", (data) => {
+          getProducts();
+          updateQuadrantList(data);
+        });
+      }, 100);
     });
+
+    // $.post('/product/update', DATA, () => {
+    //   getProducts();
+
+    //   $.post("/quadrant", (data) => {
+    //     updateQuadrantList(data);
+    //   });
+    // });
+
+    $('#update_popup, #add_product_popup, #mask').hide();
   });
+
+  // $('#update_button_submit').click(async () => {
+  //   const quadrant_id = $('#quadrant_id').val();
+  //   const product_name = $('#update_product_name input').val();
+  //   const product_quantity = $('#update_product_quantity input').val();
+  //   const product_description = $('#update_description input').val();
+  //   const product_id = $('#update_product_id').val();
+  
+  //   const DATA = {
+  //     quadrant_id: quadrant_id,
+  //     product_name: product_name,
+  //     product_quantity: product_quantity,
+  //     product_id: product_id,
+  //     product_description: product_description
+  //   };
+  
+  //   console.log("Sending update request for product:", DATA);
+  
+  //   try {
+  //     // Update the product
+  //     const updateResponse = await $.post('/product/update', DATA);
+  //     console.log("Product update response:", updateResponse);
+  
+  //     // Once the product update is complete, update the quadrant list
+  //     const quadrantData = await $.post("/quadrant");
+  //     console.log("Quadrant data response:", quadrantData);
+  
+  //     updateQuadrantList(quadrantData);
+  //   } catch (error) {
+  //     console.error("Error updating product or fetching quadrants:", error);
+  //   }
+  
+  //   $('#update_popup, #add_product_popup, #mask').hide();
+  // });
+
 
   $('#update_quadrant_button_submit').click((e) => {
     e.preventDefault();
@@ -327,13 +412,13 @@ $(document).ready(() => {
       total_space: $('#update_quadrant_total_space > input').val(),
     }
 
-    $.post('/quadrant/update', DATA, (data) => {
-      getProducts();
-    });
+    $.post('/quadrant/update', DATA, () => {
 
-    $.post("/quadrant", (data) => {
-      updateQuadrantList(data);
-      getProducts();
+      $.post("/quadrant", (data) => {
+        updateQuadrantList(data);
+        getProducts();
+      });
+
     });
 
     $('#update_popup, #update_quadrant_popup, #mask').hide();

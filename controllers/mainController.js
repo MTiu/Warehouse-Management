@@ -8,14 +8,16 @@ class MainController {
     async dashboard(req, res) { 
         const PRODUCTS = await db.getProducts();
         const QUADRANTS = await db.getQuadrants();
+        const TOPPRODUCTS = await db.getTopProducts();
         const DATA = {
             products: PRODUCTS,
-            quadrants: QUADRANTS 
+            quadrants: QUADRANTS,
+            top_products: TOPPRODUCTS
         };
 
         res.render('../views/main/dashboard', DATA);
     }
-    
+
     async view(req, res) { 
         const PRODUCTS = await db.getProducts();
         const QUADRANTS = await db.getQuadrants();
@@ -30,6 +32,20 @@ class MainController {
     async getQuadrantProducts(req, res) {
         const PRODUCTS = await db.getQuadrantProducts(req);
         const DATA = { products: PRODUCTS };
+
+        res.json(DATA);
+    }
+
+    async getTopProducts(req, res){
+        const TOPPRODUCTS = await db.getTopProducts();
+        const DATA = { top_products: TOPPRODUCTS};
+
+        res.json(DATA);
+    }
+
+    async getDoughChart(req, res){
+        const SPACE = await db.getDoughChart();
+        const DATA = { warehouse_space: SPACE};
 
         res.json(DATA);
     }

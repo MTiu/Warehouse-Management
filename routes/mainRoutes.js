@@ -33,10 +33,11 @@ mainRoutes.post("/product/add", mainController.addProduct);
 mainRoutes.post("/product/remove", mainController.removeProduct);
 mainRoutes.post("/product/update", mainController.updateProduct);
 mainRoutes.post("/quadrant/add", mainController.addQuadrant);
+mainRoutes.post("/products/top", mainController.getTopProducts)
 mainRoutes.post("/quadrant", mainController.getQuadrants);
 mainRoutes.post("/quadrant/remove", mainController.removeQuadrant);
 mainRoutes.post("/quadrant/update", mainController.updateQuadrant);
-
+mainRoutes.post("/chart/doughnut", mainController.getDoughChart)
 /**
  * DOCU: Export Router Module to App.js
  */

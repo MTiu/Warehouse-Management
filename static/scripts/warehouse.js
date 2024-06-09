@@ -261,7 +261,7 @@ class Warehouse {
     // Assuming the RandomForestClassifier class has been defined previously
     
     // Instantiating RandomForestClassifier
-    this.rfClassifier = new RandomForestClassifier(100, 42);
+    this.rfClassifier = new RandomForestClassifier(10000, 42);
     this.rfClassifier.fit(this.features, this.labels);
   }
 }

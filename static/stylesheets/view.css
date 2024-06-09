@@ -7,6 +7,7 @@
 
   body > .container {
     display: flex;
+    font-family: "Lato", sans-serif;
   }
 
   nav {

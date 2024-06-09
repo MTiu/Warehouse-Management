@@ -7,8 +7,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="/scripts/warehouse.js"></script>
-    <script src="/scripts/dashboard.js"></script>
     <script src="/scripts/chart.js"></script>
+    <script src="/scripts/dashboard.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
@@ -218,7 +218,9 @@
                   <input class="quadrant_checkbox" checked type="checkbox" name="quadrant" value="<%= quadrants[i].id %>" id="quadrant<%= quadrants[i].id %>" /> <h4><%= quadrants[i].name %></h4>
                   <h4>Free Space: <%= quadrants[i].free_space %></h4>
                   <div>
+                    <% if(i > 7) {%>
                     <button class="delete quadrant_button" value="<%= quadrants[i].id %>">Delete</button>
+                    <% } %>
                     <button class="update quadrant_button" quadrant-id="<%= quadrants[i].id %>" quadrant-name="<%= quadrants[i].name %>" quadrant-total-space="<%= quadrants[i].total_space %>">Update</button>
                   </div>
                 </label>
@@ -228,11 +230,9 @@
           <div id="lower-right">
             <h4>Top moving products</h4>
             <ol id="tmp">
-              <li>WOODY3</li>
-              <li>random</li>
-              <li>bricks4</li>
-              <li>Hollow Blocks</li>
-              <li>Tile 1</li>
+              <% for (let i = 0; i < top_products.length; i++) {%>
+                <li><%= top_products[i].name %></li>
+              <% } %>
             </ol>
           </div>
         </div>
