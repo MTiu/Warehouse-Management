@@ -93,7 +93,6 @@ function updateQuadrantList(data) {
   $('#quadrant_id').html(updateQuadrantHTML);
   $('#quadrants').html(addQuadrantHTML);
   initEventHandlers();
-  getChart();
 }
 
 function getProducts() {
@@ -126,7 +125,6 @@ function getProducts() {
     $('#tmp').html(tmpHTML);
   })
 
-  getChart();
 }
 
 $(document).ready(() => {
@@ -150,6 +148,7 @@ $(document).ready(() => {
     $.post("/quadrant", (data) => {
       updateQuadrantList(data);
       getProducts();
+      getChart();
     });
 
     $('#update_popup, #add_product_popup, #add_quadrant_popup, #mask').hide();
@@ -219,6 +218,7 @@ $(document).ready(() => {
     $.post("/quadrant", (data) => {
       updateQuadrantList(data);
       getProducts();
+      getChart();
     });
 
     $('#update_popup, #add_product_popup, #mask').hide();
@@ -277,6 +277,7 @@ $(document).ready(() => {
         $.post("/quadrant", (data) => {
           updateQuadrantList(data);
           getProducts();
+          getChart();
         });
       });
     }
@@ -290,6 +291,7 @@ $(document).ready(() => {
         $.post("/quadrant", (data) => {
           updateQuadrantList(data);
           getProducts();
+          getChart();
         });
       })
     }
@@ -352,6 +354,7 @@ $(document).ready(() => {
         $.post("/quadrant", (data) => {
           getProducts();
           updateQuadrantList(data);
+          getChart();
         });
       }, 100);
     });
@@ -417,6 +420,7 @@ $(document).ready(() => {
       $.post("/quadrant", (data) => {
         updateQuadrantList(data);
         getProducts();
+        getChart();
       });
 
     });

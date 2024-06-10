@@ -44,7 +44,6 @@ function getChart(){
   });
 }
 
-
 $(document).ready(() => {
   getChart();
 });

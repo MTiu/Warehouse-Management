@@ -11,7 +11,7 @@ class MainModel {
 
   getTopProducts() {
     return uniq.queryAll(`
-        SELECT p.id, p.name, COUNT(l.product_id) as move_count
+        SELECT p.id, p.name, SUM(l.quantity) as move_count
         FROM logs l
         JOIN products p ON l.product_id = p.id
         GROUP BY p.id, p.name
