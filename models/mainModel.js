@@ -37,21 +37,24 @@ class MainModel {
 
   async addProduct(req) {
     const QUADRANT_ID = req.body.quadrant_id;
-    const [QUADRANT_TOTAL_SPACE_RESULT] = await uniq.queryAll(`SELECT total_space FROM quadrants WHERE id = ${QUADRANT_ID}`);
-    const QUADRANT_TOTAL_SPACE = QUADRANT_TOTAL_SPACE_RESULT.total_space;
+    const [QUADRANT_FREE_SPACE_RESULT] = await uniq.queryAll(`SELECT free_space FROM quadrants WHERE id = ${QUADRANT_ID}`);
+    const QUADRANT_FREE_SPACE = QUADRANT_FREE_SPACE_RESULT.free_space;
     const NAME = req.body.name.replace(/[\\$'"]/g, "\\$&");
-    const QUANTITY = req.body.quantity;
-    const QUADRANT_FREE_SPACE = QUADRANT_TOTAL_SPACE - QUANTITY;
+    const QUANTITY = parseInt(req.body.quantity, 10);
+    const NEW_FREE_SPACE = QUADRANT_FREE_SPACE - QUANTITY;
     const DESCRIPTION = req.body.description.replace(/[\\$'"]/g, "\\$&");
-    
-    if(QUADRANT_ID && NAME && QUANTITY && DESCRIPTION) {
-      uniq.queryNone(`INSERT INTO products(quadrant_id, name, description, quantity, created_at, updated_at) VALUES(${ QUADRANT_ID }, "${ NAME }", "${ DESCRIPTION }", ${ QUANTITY }, NOW(), NOW());`);
-      uniq.queryNone(`UPDATE quadrants SET free_space = ${QUADRANT_FREE_SPACE}, updated_at = NOW() WHERE id = ${QUADRANT_ID}`)
-      return 0;
-    }
 
+    if (QUADRANT_ID && NAME && QUANTITY && DESCRIPTION) {
+        if (NEW_FREE_SPACE < 0) {
+            // Handle error: Not enough space in the quadrant
+            throw new Error('Not enough space in the quadrant');
+        }
+        await uniq.queryNone(`INSERT INTO products (quadrant_id, name, description, quantity, created_at, updated_at) VALUES (${QUADRANT_ID}, "${NAME}", "${DESCRIPTION}", ${QUANTITY}, NOW(), NOW())`);
+        await uniq.queryNone(`UPDATE quadrants SET free_space = ${NEW_FREE_SPACE}, updated_at = NOW() WHERE id = ${QUADRANT_ID}`);
+        return 0;
+    }
     return 1;
-  }
+}
 
   addQuadrant(req) {
     const NAME = req.body.name.replace(/[\\$'"]/g, "\\$&");

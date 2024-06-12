@@ -212,14 +212,14 @@ $(document).ready(() => {
     }
 
     $.post('/product/add', DATA, (data) => {
-      getProducts();
+      $.post("/quadrant", (data) => {
+        updateQuadrantList(data);
+        getProducts();
+        getChart();
+      });
+  
     });
 
-    $.post("/quadrant", (data) => {
-      updateQuadrantList(data);
-      getProducts();
-      getChart();
-    });
 
     $('#update_popup, #add_product_popup, #mask').hide();
   });

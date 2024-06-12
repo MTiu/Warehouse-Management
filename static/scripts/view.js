@@ -1,5 +1,6 @@
 // Sample data for product logs
 let previousRow;
+let selectedID;
 function loadLineChart(){
   // $.post("/")
   const productLogsData = {
@@ -66,7 +67,7 @@ function updateProductList(products) {
 let html = "";
 products.forEach(product => {
   html += `
-  <tr>
+  <tr selected-product-id="${product.id}">
     <td class="quadrant">${ product.quadrant_name }</td>
     <td class="product_title">${ product.name }</td>
     <td class="view_product" product-id="${ product.id }" product-name="${product.name}" product-desc="${ product.description}" product-quantity="${ product.quantity }" quadrant-id="${product.quadrant_id}" quadrant-name="${product.quadrant_name}">👁️</td>
@@ -80,6 +81,15 @@ if(!products.length) {
 }
 
 $('tbody').html(html);
+
+if(selectedID) {
+  const selectedRow = $(`tr[selected-product-id="${selectedID}"]`);
+  previousRow = selectedRow;
+  if (selectedRow.length) {
+    selectedRow.css('background-color', '#262626');
+    selectedRow.css('color', 'white');
+  }
+}
 }
 
 function getProducts() {
@@ -114,17 +124,18 @@ $(document).on('click','.view_product', (e) => {
 
     editHTML = `
     <h2>EDIT PRODUCT</h2>
+    <input type="hidden" id="update_product_id" value= "${$(e.target).attr('product-id')}">
     <label for="title">
       <h4>Name: </h4>
-      <input name="name" type="text" id="name" value="${$(e.target).attr('product-name')}" />
+      <input name="name" type="text" id="update_product_name" value="${$(e.target).attr('product-name')}" />
     </label>
     <label for="description">
       <h4>Description: </h4>
-      <textarea oninput="auto_grow(this)" name="description" id="description">${$(e.target).attr('product-desc') == "null" ? "No Description" : $(e.target).attr('product-desc')}</textarea>
+      <textarea oninput="auto_grow(this)" name="description" id="update_description">${$(e.target).attr('product-desc') == "null" ? "No Description" : $(e.target).attr('product-desc')}</textarea>
     </label>
     <label for="quantity">
       <h4>Quantity: </h4>
-      <input type="number" name="quantity" id="quantity" value="${parseInt($(e.target).attr('product-quantity'))}" />
+      <input type="number" name="quantity" id="update_product_quantity" value="${parseInt($(e.target).attr('product-quantity'))}" />
     </label>
     <label for="quadrant">
       <h4>Quadrant Name:</h4>
@@ -160,6 +171,27 @@ $(document).on('click','.view_product', (e) => {
   $(e.target).closest('tr').css('color', 'white');
 
   previousRow = $(e.target).closest('tr');
+  selectedID = $(e.target).attr('product-id');
+});
+
+$(document).on('click', '#edit_product_button', function() {
+  const quadrant_id = $('#quadrant_id').val();
+  const product_name = $('#update_product_name').val();
+  const product_quantity = $('#update_product_quantity').val();
+  const product_description = $('#update_description').val();
+  const product_id = $('#update_product_id').val();
+
+  const DATA = {
+      quadrant_id: quadrant_id,
+      product_name: product_name,
+      product_quantity: product_quantity,
+      product_id: product_id,
+      product_description: product_description
+  };
+
+  $.post('/product/update', DATA, () => {
+      getProducts();
+  });
 });
 
 $(document).ready(() => {
