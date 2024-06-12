@@ -10,6 +10,17 @@
     font-family: "Lato", sans-serif;
   }
 
+  h2 *{
+    vertical-align: middle;
+  }
+
+  h2 select{
+    background-color: darkslategray;
+    color: white;
+    padding: 10px;
+    border: none;
+  }
+
   nav {
     background-color:  #262626;
     height: 100vh;

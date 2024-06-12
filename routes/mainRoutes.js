@@ -37,7 +37,8 @@ mainRoutes.post("/products/top", mainController.getTopProducts)
 mainRoutes.post("/quadrant", mainController.getQuadrants);
 mainRoutes.post("/quadrant/remove", mainController.removeQuadrant);
 mainRoutes.post("/quadrant/update", mainController.updateQuadrant);
-mainRoutes.post("/chart/doughnut", mainController.getDoughChart)
+mainRoutes.post("/chart/doughnut", mainController.getDoughChart);
+mainRoutes.post("/chart/line", mainController.getLineChart);
 /**
  * DOCU: Export Router Module to App.js
  */

@@ -1,64 +1,82 @@
 // Sample data for product logs
 let previousRow;
 let selectedID;
+
+function auto_grow(element) {
+  element.style.height = "5px";
+  element.style.height = (element.scrollHeight) + "px";
+  }
+
 function loadLineChart(){
-  // $.post("/")
-  const productLogsData = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul","Aug","Sep","Oct","Nov","Dec"],
-    productAdds: [3500, 1200, 1500, 1000, 2400, 1200],
-    productRemoves: [1515, 684, 1051, 1042, 1612, 911]
-    };
-    
-    // Get the canvas element
-    const ctx = document.getElementById('productLogsChart').getContext('2d');
-    
-    // Create the chart
-    const productLogsChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: productLogsData.labels,
-      datasets: [
-        {
-          label: 'Adds',
-          data: productLogsData.productAdds,
-          borderColor: 'darkgreen',
-          backgroundColor: 'lime',
-          borderWidth: 2
-        },
-        {
-          label: 'Removes',
-          data: productLogsData.productRemoves,
-          borderColor: 'darkred',
-          backgroundColor: 'red', 
-          borderWidth: 2
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      title: {
-        display: true,
-        text: 'Product Adds and Removes Over Time'
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          title: {
-            display: true,
-            text: 'Warehouse Movement'
+      // Check if a chart instance already exists
+      const existingChart = Chart.getChart('productLogsChart');
+  
+      // If a chart instance exists, destroy it
+      if (existingChart) {
+        existingChart.destroy();
+      }
+      const SELECTED_YEAR = $('#selected_year').val();
+      const YEAR = {
+        selectedYear: SELECTED_YEAR
+      };
+  $.post("/chart/line", YEAR, (data) => {
+    const productLogsData = {
+      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul","Aug","Sep","Oct","Nov","Dec"],
+      productAdds: data.logs.map(log => log.total_adds),
+      productRemoves: data.logs.map(log => log.total_subtracts)
+      };
+      
+      // Get the canvas element
+      const ctx = document.getElementById('productLogsChart').getContext('2d');
+      
+      // Create the chart
+      const productLogsChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: productLogsData.labels,
+        datasets: [
+          {
+            label: 'Adds',
+            data: productLogsData.productAdds,
+            borderColor: 'darkgreen',
+            backgroundColor: 'lime',
+            borderWidth: 2
+          },
+          {
+            label: 'Removes',
+            data: productLogsData.productRemoves,
+            borderColor: 'darkred',
+            backgroundColor: 'red', 
+            borderWidth: 2
           }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        title: {
+          display: true,
+          text: 'Product Adds and Removes Over Time'
         },
-        x: {
-          title: {
-            display: true,
-            text: 'Months'
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Warehouse Movement'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Months'
+            }
           }
         }
       }
-    }
-    });
-    
+      });
+  });
+
 }
 
 let PRODUCTS = [];
@@ -113,10 +131,9 @@ $.post("/dashboard", { quadrant_list: quadrant_list_array_string.substring(0, qu
 });
 }
 
-function auto_grow(element) {
-element.style.height = "5px";
-element.style.height = (element.scrollHeight) + "px";
-}
+$(document).on('change', '#selected_year', () => {
+  loadLineChart();
+})
 
 $(document).on('click','.view_product', (e) => {
   let editHTML = "";
@@ -191,6 +208,7 @@ $(document).on('click', '#edit_product_button', function() {
 
   $.post('/product/update', DATA, () => {
       getProducts();
+      loadLineChart();
   });
 });
 

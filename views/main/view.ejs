@@ -26,7 +26,13 @@
     <div id="main">
       <div class="left">
         <div class="top">
-          <h2>Product Movement</h2>
+          <h2>Product Movement
+            <select id="selected_year">
+              <% for(let i = current_year; i >= 2000 ; i--) { %>
+                  <option <%= i === current_year ? 'selected' : '' %>><%= i %></option>
+              <% } %>
+          </select>          
+          </h2>
           <div id="chart_container">
             <canvas id="productLogsChart"></canvas>
           </div>

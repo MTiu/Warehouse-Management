@@ -29,6 +29,38 @@ class MainModel {
       `)
   }
 
+  getLineChart(req) {
+    return uniq.queryAll(`
+      WITH months AS (
+          SELECT 1 AS month UNION
+          SELECT 2 UNION
+          SELECT 3 UNION
+          SELECT 4 UNION
+          SELECT 5 UNION
+          SELECT 6 UNION
+          SELECT 7 UNION
+          SELECT 8 UNION
+          SELECT 9 UNION
+          SELECT 10 UNION
+          SELECT 11 UNION
+          SELECT 12
+      )
+      SELECT 
+          m.month,
+          COALESCE(SUM(CASE WHEN l.operation = 'Add' THEN l.quantity ELSE 0 END), 0) AS total_adds,
+          COALESCE(SUM(CASE WHEN l.operation = 'Subtract' THEN l.quantity ELSE 0 END), 0) AS total_subtracts
+      FROM 
+          months m
+      LEFT JOIN 
+          logs l ON m.month = MONTH(l.created_at) AND YEAR(l.created_at) = ${req.body.selectedYear}
+      GROUP BY 
+          m.month
+      ORDER BY 
+          m.month;
+      
+      `);
+  }
+
   getQuadrantProducts(req) {
     const QUADRANT_LIST = req.body.quadrant_list; // SAMPLE RETURN: 1,2,3 || 0
     const QUERY_STRING = (req.body.query_string) ? req.body.query_string : ""; // SAMPLE RETURN: 1,2,3 || 0

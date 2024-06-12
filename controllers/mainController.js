@@ -21,11 +21,13 @@ class MainController {
     async view(req, res) { 
         const PRODUCTS = await db.getProducts();
         const QUADRANTS = await db.getQuadrants();
+        const CURRENT_YEAR = new Date().getFullYear();
         const DATA = {
             products: PRODUCTS,
-            quadrants: QUADRANTS 
+            quadrants: QUADRANTS,
+            current_year: CURRENT_YEAR
         };
-
+        
         res.render('../views/main/view', DATA);
     }
 
@@ -46,6 +48,13 @@ class MainController {
     async getDoughChart(req, res){
         const SPACE = await db.getDoughChart();
         const DATA = { warehouse_space: SPACE};
+
+        res.json(DATA);
+    }
+
+    async getLineChart(req, res){
+        const LOGS = await db.getLineChart(req);
+        const DATA = { logs: LOGS};
 
         res.json(DATA);
     }
