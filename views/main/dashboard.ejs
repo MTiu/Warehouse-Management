@@ -40,9 +40,9 @@
           <h4>Quantity:</h4>
           <input type="number" name="update_quantity" placeholder="Quantity" />
         </div>
-        <div id="update_description">
+        <div >
           <h4>Description:</h4>
-          <input type="text" name="update_description" placeholder="Description" />
+          <textarea  id="update_description" name="update_description" placeholder="Description"></textarea>
         </div>
         <button id="update_button_submit">SUBMIT</button>
       </div>
@@ -64,27 +64,24 @@
           <h4>Quantity:</h4>
           <input type="number" name="quantity" placeholder="Quantity" />
         </div>
-        <div id="description">
+        <div >
           <h4>Description:</h4>
-          <input type="text" name="description" placeholder="Description" />
+          <textarea  id="description" name="description" placeholder="Description"></textarea>
         </div>
 
         <div id="quadrants">
           <h4>Select Quadrant:</h4>
           <% for(let i = 0; i < quadrants.length; i++) { %>
           <label for="add_product_quadrant<%= quadrants[i].id %>">
-            <input type="radio" name="add_product_quadrant" class="quadrant_radio_button" value="<%= quadrants[i].id %>" id="add_product_quadrant<%= quadrants[i].id %>" /> <%= quadrants[i].name %>
+            <input type="radio" name="add_product_quadrant" class="quadrant_radio_button" value="<%= quadrants[i].id %>" id="add_product_quadrant<%= quadrants[i].id %>" <%= i == 0 ? "checked" : "" %>/> <%= quadrants[i].name %>
           </label>
           <% } %>
         </div>
 
         <div id="use_of_materials">
           <h4>Use of Materials:</h4>
-          <label for="uom_materials">
-            <input type="radio" name="use_of_materials" class="use_of_material_radio_button" value="1" id="uom_materials" /> Building Materials
-          </label>
           <label for="uom_tools">
-            <input type="radio" name="use_of_materials" class="use_of_material_radio_button" value="2" id="uom_tools" /> Tools
+            <input type="radio" name="use_of_materials" class="use_of_material_radio_button" value="2" id="uom_tools" checked/> Tools
           </label>
           <label for="uom_plumbing">
             <input type="radio" name="use_of_materials" class="use_of_material_radio_button" value="3" id="uom_plumbing" /> Plumbing
@@ -94,6 +91,9 @@
           </label>
           <label for="uom_others">
             <input type="radio" name="use_of_materials" class="use_of_material_radio_button" value="5" id="uom_others" /> Others
+          </label>
+          <label for="uom_materials">
+            <input type="radio" name="use_of_materials" class="use_of_material_radio_button" value="1" id="uom_materials" /> Building Materials
           </label>
         </div>
         <div id="type_of_materials">
@@ -136,6 +136,8 @@
         <div class="close_button">×</div>
         <h2>Update Quadrant</h2>
         <input type="hidden" name="quadrant_id" id="update_quadrant_id">
+        <input type="hidden" name="quadrant_free_space" id="update_quadrant_free_space">
+        <input type="hidden" name="quadrant_current_total_space" id="update_quadrant_current_total_space">
         <div id="update_quadrant_name">
           <h4>Quadrant Name:</h4>
           <input type="text" name="quadrant_name" placeholder="Quadrant Name" />
@@ -221,7 +223,7 @@
                     <% if(i > 7) {%>
                     <button class="delete quadrant_button" value="<%= quadrants[i].id %>">Delete</button>
                     <% } %>
-                    <button class="update quadrant_button" quadrant-id="<%= quadrants[i].id %>" quadrant-name="<%= quadrants[i].name %>" quadrant-total-space="<%= quadrants[i].total_space %>">Update</button>
+                    <button class="update quadrant_button" quadrant-id="<%= quadrants[i].id %>" quadrant-name="<%= quadrants[i].name %>" quadrant-total-space="<%= quadrants[i].total_space %>" quadrant-free-space="<%= quadrants[i].free_space %>">Update</button>
                   </div>
                 </label>
               <% } %>

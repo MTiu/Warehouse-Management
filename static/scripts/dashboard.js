@@ -72,7 +72,7 @@ function updateQuadrantList(data) {
       <h4>Free Space: ${quadrant.free_space}</h4>
       <div>
         ${quadrant.id > 8 ? `<button class="delete quadrant_button" value="${quadrant.id}">Delete</button>` : ''}
-        <button class="update quadrant_button" quadrant-id="${quadrant.id}" quadrant-name="${quadrant.name}" quadrant-total-space="${quadrant.total_space}">Update</button>
+        <button class="update quadrant_button" quadrant-id="${quadrant.id}" quadrant-name="${quadrant.name}" quadrant-total-space="${quadrant.total_space}" quadrant-free-space="${quadrant.free_space}">Update</button>
       </div>
     </label>
     `;
@@ -82,13 +82,13 @@ function updateQuadrantList(data) {
       <option value="${ quadrant.id }">${ quadrant.name }</option>
     `;
     })
-  data.quadrants.forEach(quadrant => {
-    addQuadrantHTML += `
-      <label for="add_product_quadrant${ quadrant.id }">
-        <input type="radio" name="add_product_quadrant" class="quadrant_radio_button" value="${ quadrant.id }" id="add_product_quadrant${ quadrant.id }" /> ${ quadrant.name }
-      </label>
-    `;
-    })
+    data.quadrants.forEach((quadrant, index) => {
+      addQuadrantHTML += `
+        <label for="add_product_quadrant${ quadrant.id }">
+          <input type="radio" name="add_product_quadrant" class="quadrant_radio_button" value="${ quadrant.id }" id="add_product_quadrant${ quadrant.id }" ${ index === 0 ? "checked" : "" } /> ${ quadrant.name }
+        </label>
+      `;
+    });
   $('#quadrant_list').html(quadrantHTML);
   $('#quadrant_id').html(updateQuadrantHTML);
   $('#quadrants').html(addQuadrantHTML);
@@ -136,8 +136,13 @@ $(document).ready(() => {
     e.preventDefault();
     e.stopPropagation();
 
+    let temp_name = $('#quadrant_name > input').val();
+    if(!temp_name){
+      alert("QUADRANT NAME should not be empty!");
+      return
+    }
     const DATA = {
-      name: $('#quadrant_name > input').val(),
+      name: temp_name,
       total_space: $('#quadrant_total_space > input').val(),
     }
 
@@ -180,38 +185,29 @@ $(document).ready(() => {
       // Predict the categories using the trained Random Forest Classifier
       const predictedCategories = warehouse.rfClassifier.predict(newData);
       const dataWithCategories = newData.map((row, index) => [...row, predictedCategories[index]]);
-      // const kClusters = 2;
-
-      // console.log(newData);
-
-      // // Using the newData classified by the Random Forest
-      // const newDataWithCategories = newData.map((row, index) => [...row, predictedCategories[index]]);
-      // const newQuantities = newDataWithCategories.map(row => [row[0]]);
-      // const initialIndices = [];
-      // initialIndices.push(Math.floor(Math.random() * newQuantities.length));
-
-      // const initialCentroids = initialIndices.map(index => newQuantities[index]);
-
-      // // Assuming KMeans class and its methods are already defined
-      // const kmeansModel = new KMeans(kClusters, 42);
-      // kmeansModel.fit(newData); // Use the original features of newData
-      // const newClusters = kmeansModel.assignLabels(newData);
-      // const centroids = kmeansModel.centroids;
-
       quadrant_id = Math.round(dataWithCategories[0][3]);
 
     } else {
       quadrant_id = $('input[name="add_product_quadrant"]:checked').val();
     }
+    let temp_description = $('textarea[name="description"]').val() || "No Description";
+    let temp_name = $('#product_name > input').val();
+    if(!temp_name){
+      alert("PRODUCT NAME should not be empty!");
+      return;
+    }
 
     const DATA = {
-      name: $('#product_name > input').val(),
+      name: temp_name,
       quantity: $('#product_quantity > input').val(),
-      description: $('input[name="description"]').val(),
+      description: temp_description,
       quadrant_id: quadrant_id
     }
 
     $.post('/product/add', DATA, (data) => {
+      if(data.errors){
+        alert("Quadrant doesn't have enough space!");
+      }
       $.post("/quadrant", (data) => {
         updateQuadrantList(data);
         getProducts();
@@ -227,6 +223,9 @@ $(document).ready(() => {
   $('#add_product').click(() => {
     $('#add_product_popup, #mask').show();
     $('#type_of_materials').css("display", "none");
+    $('#product-name input').val("");
+    $('#product-quantity input').val(0);
+    $('#description').val("");
   })
 
   $('#deselect_button').on('click', function() {
@@ -250,13 +249,31 @@ $(document).ready(() => {
   $('#manual_add').click(() => {
     $('#quadrants').show();
     $('#use_of_materials, #type_of_materials').hide();
-    $('input[name="type_of_materials"], input[name="use_of_materials"], input[name="add_product_quadrant"]').prop('checked', false);
+    $('input[name="type_of_materials"], input[name="use_of_materials"]').prop('checked', false);
+    $('input[id="add_product_quadrant1"]').prop('checked', true);
+    $('#automatic_add').css({
+      'background-color' : 'white',
+      'color' : 'black'
+    })
+    $('#manual_add').css({
+      'background-color' : 'black',
+      'color' : 'white'
+    })
   })
 
   $('#automatic_add').click(() => {
     $('#quadrants').hide();
     $('#use_of_materials').show();
     $('input[name="type_of_materials"], input[name="use_of_materials"], input[name="add_product_quadrant"]').prop('checked', false);
+    $('#uom_tools').prop('checked',true);
+    $('#automatic_add').css({
+      'background-color' : 'black',
+      'color' : 'white'
+    })
+    $('#manual_add').css({
+      'background-color' : 'white',
+      'color' : 'black'
+    })
   })
 
   $('#use_of_materials input').click((e) => {
@@ -265,7 +282,8 @@ $(document).ready(() => {
     } else {
       $('input[name="type_of_materials"]').prop('checked', false);
       $('#type_of_materials').css("display", "none");
-    }
+      }
+    $('#tom_wood').prop('checked', true);
   });
   
   $(document).on('click', '.remove_product', (e) => {
@@ -314,7 +332,7 @@ $(document).ready(() => {
 
     $('#update_product_name input').val(product_name);
     $('#update_product_quantity input').val(product_quantity);
-    $('#update_description input').val(product_description);
+    $('#update_description').val(product_description);
     $('#update_product_id').val(product_id);
   });
 
@@ -326,19 +344,25 @@ $(document).ready(() => {
     let quadrant_name = $(e.target).attr('quadrant-name');
     let quadrant_id = $(e.target).attr('quadrant-id');
     let quadrant_total_space = $(e.target).attr('quadrant-total-space');
+    let quadrant_free_space = $(e.target).attr('quadrant-free-space');
     
     $('#update_quadrant_name input').val(quadrant_name);
     $('#update_quadrant_id').val(quadrant_id);
     $('#update_quadrant_total_space input').val(quadrant_total_space);
+    $('#update_quadrant_current_total_space').val(quadrant_total_space);
+    $('#update_quadrant_free_space').val(quadrant_free_space);
   });
 
   $('#update_button_submit').click(() => {
     const quadrant_id = $('#quadrant_id').val();
     const product_name = $('#update_product_name input').val();
     const product_quantity = $('#update_product_quantity input').val();
-    const product_description = $('#update_description input').val();
+    const product_description = $('#update_description').val() || "No Description";
     const product_id = $('#update_product_id').val();
-
+    if(!product_name){
+      alert("PRODUCT NAME should not be empty!");
+      return;
+    }
     const DATA = {
       quadrant_id: quadrant_id,
       product_name: product_name,
@@ -347,10 +371,12 @@ $(document).ready(() => {
       product_description: product_description
     };
 
-    $.post('/product/update', DATA, () => {
+    $.post('/product/update', DATA, (data) => {
       // Delay the quadrant fetch by 5 seconds
-      
       setTimeout(() => {
+        if(data.errors){
+          alert("Quadrant doesn't have enough space!");
+        }
         $.post("/quadrant", (data) => {
           getProducts();
           updateQuadrantList(data);
@@ -359,60 +385,36 @@ $(document).ready(() => {
       }, 100);
     });
 
-    // $.post('/product/update', DATA, () => {
-    //   getProducts();
-
-    //   $.post("/quadrant", (data) => {
-    //     updateQuadrantList(data);
-    //   });
-    // });
-
     $('#update_popup, #add_product_popup, #mask').hide();
   });
-
-  // $('#update_button_submit').click(async () => {
-  //   const quadrant_id = $('#quadrant_id').val();
-  //   const product_name = $('#update_product_name input').val();
-  //   const product_quantity = $('#update_product_quantity input').val();
-  //   const product_description = $('#update_description input').val();
-  //   const product_id = $('#update_product_id').val();
-  
-  //   const DATA = {
-  //     quadrant_id: quadrant_id,
-  //     product_name: product_name,
-  //     product_quantity: product_quantity,
-  //     product_id: product_id,
-  //     product_description: product_description
-  //   };
-  
-  //   console.log("Sending update request for product:", DATA);
-  
-  //   try {
-  //     // Update the product
-  //     const updateResponse = await $.post('/product/update', DATA);
-  //     console.log("Product update response:", updateResponse);
-  
-  //     // Once the product update is complete, update the quadrant list
-  //     const quadrantData = await $.post("/quadrant");
-  //     console.log("Quadrant data response:", quadrantData);
-  
-  //     updateQuadrantList(quadrantData);
-  //   } catch (error) {
-  //     console.error("Error updating product or fetching quadrants:", error);
-  //   }
-  
-  //   $('#update_popup, #add_product_popup, #mask').hide();
-  // });
-
 
   $('#update_quadrant_button_submit').click((e) => {
     e.preventDefault();
     e.stopPropagation();
 
+    let temp_name = $('#update_quadrant_name > input').val();
+    let current_total_space = parseInt($('#update_quadrant_current_total_space').val());
+    let temp_total_space = parseInt($('#update_quadrant_total_space > input').val());
+    let temp_free_space = parseInt($('#update_quadrant_free_space').val());
+    let temp_used_space = Math.abs(temp_free_space - current_total_space);
+
+    if(!temp_name){
+      alert("QUADRANT NAME should not be empty!");
+      return;
+    }
+    if(!temp_total_space){
+      alert("QUADRANT TOTAL SPACE should not be empty!");
+      return;
+    }
+    if (temp_total_space < temp_used_space) {
+      alert("TOTAL SPACE cannot be less than used space.");
+      return;
+    }
+
     const DATA = {
       id: $('#update_quadrant_id').val(),
-      name: $('#update_quadrant_name > input').val(),
-      total_space: $('#update_quadrant_total_space > input').val(),
+      name: temp_name,
+      total_space: temp_total_space,
     }
 
     $.post('/quadrant/update', DATA, () => {

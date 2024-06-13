@@ -195,9 +195,12 @@ $(document).on('click', '#edit_product_button', function() {
   const quadrant_id = $('#quadrant_id').val();
   const product_name = $('#update_product_name').val();
   const product_quantity = $('#update_product_quantity').val();
-  const product_description = $('#update_description').val();
+  const product_description = $('#update_description').val() || "No Description";
   const product_id = $('#update_product_id').val();
-
+  if(!product_name){
+    alert("PRODUCT NAME should not be empty!");
+    return;
+  }
   const DATA = {
       quadrant_id: quadrant_id,
       product_name: product_name,
@@ -206,7 +209,10 @@ $(document).on('click', '#edit_product_button', function() {
       product_description: product_description
   };
 
-  $.post('/product/update', DATA, () => {
+  $.post('/product/update', DATA, (data) => {
+    if(data.errors){
+      alert("Quadrant doesn't have enough space!");
+    }
       getProducts();
       loadLineChart();
   });

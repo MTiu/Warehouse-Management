@@ -78,8 +78,7 @@ class MainModel {
 
     if (QUADRANT_ID && NAME && QUANTITY && DESCRIPTION) {
         if (NEW_FREE_SPACE < 0) {
-            // Handle error: Not enough space in the quadrant
-            throw new Error('Not enough space in the quadrant');
+            return true;
         }
         await uniq.queryNone(`INSERT INTO products (quadrant_id, name, description, quantity, created_at, updated_at) VALUES (${QUADRANT_ID}, "${NAME}", "${DESCRIPTION}", ${QUANTITY}, NOW(), NOW())`);
         await uniq.queryNone(`UPDATE quadrants SET free_space = ${NEW_FREE_SPACE}, updated_at = NOW() WHERE id = ${QUADRANT_ID}`);
@@ -134,19 +133,26 @@ class MainModel {
     const PRODUCT_NAME = req.body.product_name;
     const PRODUCT_QUANTITY = parseInt(req.body.product_quantity);
     const PRODUCT_DESCRIPTION = req.body.product_description;
-    let operation = "";
 
     if(PRODUCT_ID && QUADRANT_ID && PRODUCT_NAME && PRODUCT_QUANTITY && PRODUCT_DESCRIPTION) {
+      
       const [PRODUCT_CURRENT_RESULT] = await uniq.queryAll(`SELECT quantity, quadrant_id FROM products WHERE id = ${PRODUCT_ID}`);
       const PRODUCT_CURRENT_QUANTITY = PRODUCT_CURRENT_RESULT.quantity;
       const PRODUCT_CURRENT_QUADRANT_ID = PRODUCT_CURRENT_RESULT.quadrant_id;
-  
+      const quantityDifference = PRODUCT_QUANTITY - PRODUCT_CURRENT_QUANTITY;
+      // Check if the operation will result in negative free space
+      const [NEW_QUADRANT_FREE_SPACE_RESULT] = await uniq.queryAll(`SELECT free_space FROM quadrants WHERE id = ${QUADRANT_ID}`);
+      const NEW_QUADRANT_FREE_SPACE = NEW_QUADRANT_FREE_SPACE_RESULT.free_space - quantityDifference;
+      if (NEW_QUADRANT_FREE_SPACE < 0) {
+        return true;
+      }
+
       // Update the product
       await uniq.queryNone(`UPDATE products SET quadrant_id = "${ QUADRANT_ID }", name = "${ PRODUCT_NAME }", quantity = "${ PRODUCT_QUANTITY }", description = "${ PRODUCT_DESCRIPTION }" WHERE id = "${ PRODUCT_ID }";`);
   
       if (PRODUCT_QUANTITY !== PRODUCT_CURRENT_QUANTITY) {
         // Calculate the difference in quantity
-        const quantityDifference = PRODUCT_QUANTITY - PRODUCT_CURRENT_QUANTITY;
+        
         let operation = '';
         if (quantityDifference > 0) {
           operation = 'Add';
@@ -163,8 +169,6 @@ class MainModel {
         await uniq.queryNone(`UPDATE quadrants SET free_space = ${PREV_QUADRANT_FREE_SPACE} WHERE id = ${PRODUCT_CURRENT_QUADRANT_ID}`);
       }
       // Update the free space in the new quadrant
-      const [NEW_QUADRANT_FREE_SPACE_RESULT] = await uniq.queryAll(`SELECT free_space FROM quadrants WHERE id = ${QUADRANT_ID}`);
-      const NEW_QUADRANT_FREE_SPACE = NEW_QUADRANT_FREE_SPACE_RESULT.free_space - PRODUCT_QUANTITY;
       await uniq.queryNone(`UPDATE quadrants SET free_space = ${NEW_QUADRANT_FREE_SPACE} WHERE id = ${QUADRANT_ID}`);
 
       return 0;

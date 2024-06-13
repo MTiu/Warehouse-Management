@@ -350,8 +350,8 @@ td {
 }
 #button_container button#automatic_add {
     padding: 10px 20px;
-    background-color: white;
-    color: black;
+    background-color: black;
+    color: white;
     width: 40%;
     cursor: pointer;
     border-radius: 5px;
@@ -359,9 +359,9 @@ td {
 #button_container button#manual_add {
     width: 40%;
     padding: 10px 20px;
-    background-color: black;
+    background-color: white;
     cursor: pointer;
-    color: white;
+    color: black;
     border-radius: 5px;
 }
 
@@ -382,7 +382,6 @@ td {
 #description input,
 #update_product_name input,
 #update_product_quantity input,
-#update_description input,
 #update_quadrant_name input,
 #update_quadrant_total_space input,
 #quadrant_name input,
@@ -518,4 +517,16 @@ td {
 #quadrant_list .quadrant {
     width: 250px;
     height: 125px;
+}
+
+#description, #update_description {
+    padding: 5px;
+    resize: none;
+    width: 100%;
+    height: 100px;
+}
+
+#description {
+    height: 50px;
+    margin-bottom: 0;
 }

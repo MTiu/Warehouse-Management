@@ -70,8 +70,11 @@ class MainController {
 
     async addProduct(req, res) {
         try {
-            db.addProduct(req);
-            res.json({status: 0});
+            const ERRORS = await db.addProduct(req);
+            const DATA = {
+                errors: ERRORS
+            }
+            res.json(DATA);
         } catch(e) {
             res.json({status: 1});
         }
@@ -106,8 +109,11 @@ class MainController {
 
     async updateProduct(req, res) {
         try {
-            db.updateProduct(req);
-            res.json({status: 0});
+            const ERRORS = await db.updateProduct(req);
+            const DATA = {
+                errors: ERRORS
+            }
+            res.json(DATA);
         } catch(e) {
             res.json({status: 1});
         }
