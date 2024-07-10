@@ -25,7 +25,13 @@ const mainController = require("../controllers/mainController");
  * Routes the User from specific request.
  */
 
-mainRoutes.get("/", mainController.dashboard);
+mainRoutes.get("/", mainController.login);
+mainRoutes.post("/logProc", mainController.logProc);
+mainRoutes.get("/logs", mainController.logs);
+mainRoutes.post("/logSearch", mainController.searchLogs);
+mainRoutes.post("/removeLog", mainController.removeLog);
+mainRoutes.get("/users", mainController.users);
+mainRoutes.get("/profile", mainController.profile);
 mainRoutes.get("/dashboard", mainController.dashboard);
 mainRoutes.get("/view", mainController.view);
 mainRoutes.post("/dashboard", mainController.getQuadrantProducts);

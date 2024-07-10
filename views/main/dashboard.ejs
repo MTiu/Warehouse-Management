@@ -13,6 +13,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/stylesheets/dashboard.css">
+    <link rel="icon" href="/img/Warehome.png" type="image/icon type">
   </head>
   <body>
     <!-- #Number 2 Feature - Use of Material (Building Material, Tools, Plumbing, Fasteners, Others)
@@ -38,7 +39,16 @@
         </div>
         <div id="update_product_quantity">
           <h4>Quantity:</h4>
-          <input type="number" name="update_quantity" placeholder="Quantity" />
+          <input type="number" name="update_quantity" placeholder="Quantity" min="1" />
+        </div>
+        <div class="product_size">
+          <h3>Product Size (In centimeters)</h3>
+          <h4>Length:</h4>
+          <input type="number" id= "update_product_length" name="update_product_total_length" placeholder="Length" min="1" />
+          <h4>Width:</h4>
+          <input type="number" id= "update_product_width" name="update_product_total_width" placeholder="Width" min="1" />
+          <h4>Height:</h4>
+          <input type="number" id= "update_product_height" name="update_product_total_height" placeholder="Height" min="1" />
         </div>
         <div >
           <h4>Description:</h4>
@@ -62,13 +72,21 @@
         </div>
         <div id="product_quantity">
           <h4>Quantity:</h4>
-          <input type="number" name="quantity" placeholder="Quantity" />
+          <input type="number" name="quantity" placeholder="Quantity" min = "1" />
+        </div>
+        <div class="product_size">
+          <h3>Product Size (In centimeters)</h3>
+          <h4>Length:</h4>
+          <input type="number" id= "product_length" name="quadrant_total_length" placeholder="Length" min="1" />
+          <h4>Width:</h4>
+          <input type="number" id= "product_width" name="quadrant_total_width" placeholder="Width" min="1" />
+          <h4>Height:</h4>
+          <input type="number" id= "product_height" name="quadrant_total_height" placeholder="Height" min="1" />
         </div>
         <div >
           <h4>Description:</h4>
           <textarea  id="description" name="description" placeholder="Description"></textarea>
         </div>
-
         <div id="quadrants">
           <h4>Select Quadrant:</h4>
           <% for(let i = 0; i < quadrants.length; i++) { %>
@@ -120,12 +138,17 @@
         <div class="close_button">×</div>
         <h2>Add Quadrant</h2>
         <div id="quadrant_name">
-          <h4>Quadrant Name:</h4>
+          <h3>Quadrant Name:</h3>
           <input type="text" name="quadrant_name" placeholder="Quadrant Name" />
         </div>
         <div id="quadrant_total_space">
-          <h4>Total Space:</h4>
-          <input type="number" name="quadrant_total_space" placeholder="Total Space" />
+          <h3>Quadrant Size (In Centimeters)</h3>
+          <h4>Length:</h4>
+          <input type="number" id = "quadrant_total_length" name="quadrant_total_length" placeholder="Length" min="1" />
+          <h4>Width:</h4>
+          <input type="number" id = "quadrant_total_width" name="quadrant_total_width" placeholder="Width" min="1" />
+          <h4>Height:</h4>
+          <input type="number" id = "quadrant_total_height" name="quadrant_total_height" placeholder="Height" min="1" />
         </div>
         <button id="add_quadrant_button_submit">SUBMIT</button>
       </div>
@@ -143,8 +166,13 @@
           <input type="text" name="quadrant_name" placeholder="Quadrant Name" />
         </div>
         <div id="update_quadrant_total_space">
-          <h4>Total Space:</h4>
-          <input type="number" name="quadrant_total_space" placeholder="Total Space" />
+          <h3>Quadrant Size (In Centimeters)</h3>
+          <h4>Length:</h4>
+          <input type="number" id = "update_quadrant_total_length" name="quadrant_total_length" placeholder="Length" min="1" />
+          <h4>Width:</h4>
+          <input type="number" id = "update_quadrant_total_width" name="quadrant_total_width" placeholder="Width" min="1" />
+          <h4>Height:</h4>
+          <input type="number" id = "update_quadrant_total_height" name="quadrant_total_height" placeholder="Height" min="1" />
         </div>
         <button id="update_quadrant_button_submit">SUBMIT</button>
       </div>
@@ -153,7 +181,12 @@
     <div id="main-container">
       <div id="left-side">
         <div class="image-container">
-          <a href="/dashboard">
+          <a href="/dashboard" >
+            <img src="/img/Warehome.png" alt="" />
+          </a>
+        </div>
+        <div class="image-container">
+          <a href="/dashboard" class="selected">
             <img src="" alt="" />
             <p>Dashboard</p>
           </a>
@@ -162,6 +195,25 @@
           <a href="/view">
             <img src="" alt="" />
             <p>View</p>
+          </a>
+        </div>
+        <div class="image-container">
+          <a href="/logs">
+            <img src="" alt="" />
+            <p>Logs</p>
+          </a>
+        </div>
+        <div class="image-container">
+          <a href="/users">
+            <img src="" alt="" />
+            <p>Users</p>
+          </a>
+        </div>
+        <div class="image-container">
+          <a href="/profile/<%= user.id %>">
+            <img src="" alt="" />
+            <input type="hidden" id="user_id" value = <%= user.id %> >
+            <p>Profile</p>
           </a>
         </div>
       </div>
@@ -204,7 +256,7 @@
           </div>
           <div id="upper-right">
             <div id="quadrant_usage">
-              <h4>Warehouse Space</h4>
+              <h4>Warehouse Space (Cubic cm)</h4>
               <div id="chart_container">
                 <canvas id="myDonutChart" width="300" height="300"></canvas>
               </div>
@@ -214,20 +266,7 @@
         <div id="lower">
           <div id="lower-left">
             <h1>List of Quadrants <button id="add_quadrant">Add Quadrant</button> <button id="select_all_button">Select all</button> <button id="deselect_button">Clear Selection</button></h1>
-            <div id="quadrant_list">
-              <% for(let i = 0; i < quadrants.length; i++) { %>
-                <label class="quadrant" for="quadrant<%= quadrants[i].id %>">
-                  <input class="quadrant_checkbox" checked type="checkbox" name="quadrant" value="<%= quadrants[i].id %>" id="quadrant<%= quadrants[i].id %>" /> <h4><%= quadrants[i].name %></h4>
-                  <h4>Free Space: <%= quadrants[i].free_space %></h4>
-                  <div>
-                    <% if(i > 7) {%>
-                    <button class="delete quadrant_button" value="<%= quadrants[i].id %>">Delete</button>
-                    <% } %>
-                    <button class="update quadrant_button" quadrant-id="<%= quadrants[i].id %>" quadrant-name="<%= quadrants[i].name %>" quadrant-total-space="<%= quadrants[i].total_space %>" quadrant-free-space="<%= quadrants[i].free_space %>">Update</button>
-                  </div>
-                </label>
-              <% } %>
-            </div>
+            <div id="quadrant_list"></div>
           </div>
           <div id="lower-right">
             <h4>Top moving products</h4>

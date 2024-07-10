@@ -10,7 +10,7 @@ function getChart(){
   $.post('/chart/doughnut', (res) => {
     // Data for the chart (two values)
     const data = {
-      labels: ['unused space', 'used space'],
+      labels: ['Unused Space', 'Used Space'],
       datasets: [{
         data: [res.warehouse_space[0].free_space, res.warehouse_space[0].used_space], // Replace these numbers with your own data
         backgroundColor: [

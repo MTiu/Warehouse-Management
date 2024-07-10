@@ -2,6 +2,10 @@ use warehouse;
 SELECT * FROM products;
 SELECT * FROM quadrants;
 SELECT * FROM logs;
+SELECT * FROM users;
+
+ALTER TABLE products AUTO_INCREMENT = 1;
+DELETE FROM products;
 
 SELECT 
     MONTH(created_at) AS month,
@@ -141,3 +145,38 @@ INSERT INTO logs (product_id, operation, quantity, created_at, updated_at) VALUE
 (3, 'Subtract', 66, '2024-12-15', '2024-12-15'),
 (4, 'Add', 78, '2024-12-22', '2024-12-22'),
 (5, 'Subtract', 37, '2024-12-29', '2024-12-29');
+
+ALTER TABLE products
+ADD COLUMN length DECIMAL(10, 2),
+ADD COLUMN width DECIMAL(10, 2),
+ADD COLUMN height DECIMAL(10, 2);
+
+ALTER TABLE quadrants
+ADD COLUMN length DECIMAL(10, 2),
+ADD COLUMN width DECIMAL(10, 2),
+ADD COLUMN height DECIMAL(10, 2);
+
+UPDATE quadrants SET free_space = 125 WHERE id = 54;
+
+UPDATE logs SET user_id = 1 WHERE user_id = 0;
+
+SELECT 
+    COALESCE(p.id, 0) AS product_id,
+    COALESCE(p.name, 'Removed Product') AS product_name,
+    COALESCE(u.first_name, 'Unknown') AS first_name,
+    COALESCE(u.last_name, 'User') AS last_name,
+    l.operation,
+    l.quantity,
+    l.created_at,
+    l.updated_at
+FROM 
+    logs l
+LEFT JOIN 
+    products p ON l.product_id = p.id
+LEFT JOIN 
+    users u ON l.user_id = u.id
+ORDER BY 
+    p.id DESC;
+    
+    SELECT * FROM logs;
+    SELECT * FROM products where id = 76;

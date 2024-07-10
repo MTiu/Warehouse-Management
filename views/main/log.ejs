@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Logs</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="stylesheets/log.css">
+  <link rel="icon" href="/img/Warehome.png" type="image/icon type">
+</head>
+<body>
+  <div class="container">
+    <nav>
+      <div class="image-container">
+        <a href="/dashboard">
+          <img src="/img/Warehome.png" alt="" />
+        </a>
+      </div>
+      <div class="image_container">
+        <a href="/dashboard">
+          <img src="" alt="" />
+          <p>Dashboard</p>
+        </a>
+      </div>
+      <div class="image_container">
+        <a href="/view">
+          <img src="" alt="" />
+          <p>View</p>
+        </a>
+      </div>
+      <div class="image_container" >
+        <a href="/logs" class="selected">
+          <img src="" alt="" />
+          <p>Logs</p>
+        </a>
+      </div>
+      <div class="image_container">
+        <a href="/users">
+          <img src="" alt="" />
+          <p>Users</p>
+        </a>
+      </div>
+      <div class="image_container">
+        <a href="/profile">
+          <img src="" alt="" />
+          <p>Profile</p>
+        </a>
+      </div>
+    </nav>
+    <div id="main">
+      <div class="container">
+        <div class="bottom">
+            <h2>Logs </h2>
+            <div id="search">
+                <input type="value" required="" value="" />
+                <label>
+                  <span style="transition-delay: 0ms">S</span>
+                  <span style="transition-delay: 50ms">e</span>
+                  <span style="transition-delay: 100ms">a</span>
+                  <span style="transition-delay: 150ms">r</span>
+                  <span style="transition-delay: 200ms">c</span>
+                  <span style="transition-delay: 250ms">h</span>
+                </label>
+            </div>
+            <table>
+              <thead>
+                <th>Product ID</th>
+                <th>Product Name</th>
+                <th>Username</th>
+                <th>Operation</th>
+                <th>Quantity</th>
+                <th>Logged at</th>
+                <th>Edited at</th>
+                <th>Edit</th>
+                <th>Remove</th>
+              </thead>
+              <tbody></tbody>
+            </table>
+        </div>
+      </div>
+  </div>
+  <div class="edit-container">
+    <form id="editForm">
+        <button id="closeButton">X</button>
+        <h1>Edit</h1>
+        <label>
+            <h2>Product Name</h2>
+            <input type="hidden" name="log_id">
+            <input type="text" placeholder="Enter Product Name" name="product_name" required> 
+        </label>
+        <label>
+            <h2>Log Operation</h2>
+            <select name="operation">
+              <option value="Add">Add</option>
+              <option value="Subtract">Subtract</option>
+              <option value="New">New</option>
+              <option value="Remove">Remove</option>
+            </select>
+        </label>
+        <label>
+            <h2>Operation Quantity</h2>
+            <input type="number" placeholder="Enter Quantity" name="quantity" min="0" required> 
+        </label>
+        <input type="submit" id="submitButton" value="Edit">
+    </form>
+  </div>
+  <div class="mask"></div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="/scripts/log.js"></script>
+</body>
+</html>

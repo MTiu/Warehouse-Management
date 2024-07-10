@@ -5,20 +5,50 @@ const db = require('../models/mainModel');
  */
 
 class MainController {
+
+    async login(req, res) {
+        res.render('../views/main/login');
+    }
+
+    async logProc(req, res) {
+        const USER = await db.getUser(req);
+        if(typeof USER == "string"){
+            res.json({message: USER});
+            return;
+        }
+
+        req.session.user = USER;
+        res.json('/dashboard');
+    }
+
     async dashboard(req, res) { 
+
+        if(!req.session.user){
+            res.redirect('/');
+            return;
+        } 
+
         const PRODUCTS = await db.getProducts();
         const QUADRANTS = await db.getQuadrants();
         const TOPPRODUCTS = await db.getTopProducts();
+        const USER = req.session.user;
         const DATA = {
             products: PRODUCTS,
             quadrants: QUADRANTS,
-            top_products: TOPPRODUCTS
+            top_products: TOPPRODUCTS,
+            user: USER
         };
 
         res.render('../views/main/dashboard', DATA);
     }
 
     async view(req, res) { 
+
+        if(!req.session.user){
+            res.redirect('/');
+            return;
+        }
+
         const PRODUCTS = await db.getProducts();
         const QUADRANTS = await db.getQuadrants();
         const CURRENT_YEAR = new Date().getFullYear();
@@ -29,6 +59,38 @@ class MainController {
         };
         
         res.render('../views/main/view', DATA);
+    }
+
+    async logs(req, res){
+
+        if(!req.session.user){
+            res.redirect('/');
+            return;
+        }
+
+        res.render('../views/main/log');
+    }
+
+    async searchLogs(req, res){
+        const LOGS = await db.searchLogs(req);
+        res.json(LOGS);
+    }
+
+    async removeLog(req, res){
+        try {
+            await db.removeLog(req);
+            res.json({status: 0});
+        } catch(e) {
+            res.json({status: 1});
+        }
+    }
+
+    async users(req, res){
+        res.render('../views/main/users');
+    }
+
+    async profile(req, res){
+        res.render('../views/main/profile');
     }
 
     async getQuadrantProducts(req, res) {
@@ -91,7 +153,7 @@ class MainController {
 
     async removeProduct(req, res) {
         try {
-            db.removeProduct(req);
+            await db.removeProduct(req);
             res.json({status: 0});
         } catch(e) {
             res.json({status: 1});
@@ -100,7 +162,7 @@ class MainController {
 
     async removeQuadrant(req, res) {
         try {
-            db.removeQuadrant(req);
+            await db.removeQuadrant(req);
             res.json({status: 0});
         } catch(e) {
             res.json({status: 1});

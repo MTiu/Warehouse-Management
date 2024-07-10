@@ -29,6 +29,22 @@
     display: flex;
     flex-direction: column;
   }
+  nav *{
+    user-select: none;
+  }
+
+  nav .image_container .selected{
+    font-weight: bolder;
+    color: skyblue; 
+    cursor:default; 
+    pointer-events: none; 
+    user-select: none;
+  }
+
+  nav .image-container .selected p{
+    font-size: 1.4rem;
+  }
+
     nav .image_container a {
       color: white;
       font-size: 19px;
@@ -158,4 +174,8 @@
     font-size: 16px;
     font-weight: bolder;
     border: none;
+  }
+
+  img{
+    width: 100px;
   }

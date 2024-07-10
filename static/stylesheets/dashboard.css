@@ -39,6 +39,23 @@ h1 *, h2 *{
     font-size: 19px;
 }
 
+.image-container *{
+    user-select: none;
+  }
+
+.image-container .selected{
+    
+    font-weight: bolder;
+    color: skyblue; 
+    cursor:default; 
+    pointer-events: none; 
+    user-select: none;
+}
+
+.image-container .selected p{
+    font-size: 1.3rem;
+}
+
 #right-side {
     margin-left: 20px;
     display: flex;
@@ -274,8 +291,8 @@ td {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 400px;
-    height: 500px;
+    width: 600px;
+    height: 650px;
     border: 1px solid black;
     border-radius: 10px;
     padding: 20px;
@@ -297,8 +314,8 @@ td {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 400px;
-    height: 800px;
+    width: 600px;
+    height: 900px;
     border: 1px solid black;
     border-radius: 10px;
     padding: 20px;
@@ -309,7 +326,8 @@ td {
 }
 
 #add_quadrant_popup, #update_quadrant_popup {
-    height: 300px;
+    width: 650px;
+    height: 350px;
 }
 
 #add_product_popup h4,
@@ -367,6 +385,7 @@ td {
 
 #product_name,
 #product_quantity,
+.product_size,
 #description,
 #update_product_name,
 #update_product_quantity,
@@ -379,6 +398,7 @@ td {
 }
 #product_name input,
 #product_quantity input,
+.product_size input,
 #description input,
 #update_product_name input,
 #update_product_quantity input,
@@ -389,6 +409,23 @@ td {
     padding: 5px 10px;
     width: 50%;
     margin-bottom: 10px;
+}
+
+.product_size h4,
+.product_size input,
+#quadrant_total_space input, 
+#quadrant_total_space h4, 
+#update_quadrant_total_space input, 
+#update_quadrant_total_space h4{
+    width: 20%;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.product_size h4,
+#quadrant_total_space h4, 
+#update_quadrant_total_space h4{
+    width: 7%;
 }
 
 #add_product_popup #container, #add_quadrant_popup #quadrant_container {
@@ -527,6 +564,10 @@ td {
 }
 
 #description {
-    height: 50px;
+    height: 80px;
     margin-bottom: 0;
+}
+
+img{
+    width: 100px;
 }

@@ -6,10 +6,16 @@
   <title>View</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="stylesheets/view.css">
+  <link rel="icon" href="/img/Warehome.png" type="image/icon type">
 </head>
 <body>
   <div class="container">
     <nav>
+      <div class="image-container">
+        <a href="/dashboard">
+          <img src="/img/Warehome.png" alt="" />
+        </a>
+      </div>
       <div class="image_container">
         <a href="/dashboard">
           <img src="" alt="" />
@@ -17,9 +23,27 @@
         </a>
       </div>
       <div class="image_container">
-        <a href="/view">
+        <a href="/view" class="selected">
           <img src="" alt="" />
           <p>View</p>
+        </a>
+      </div>
+      <div class="image_container">
+        <a href="/logs">
+          <img src="" alt="" />
+          <p>Logs</p>
+        </a>
+      </div>
+      <div class="image_container">
+        <a href="/users">
+          <img src="" alt="" />
+          <p>Users</p>
+        </a>
+      </div>
+      <div class="image_container">
+        <a href="/profile">
+          <img src="" alt="" />
+          <p>Profile</p>
         </a>
       </div>
     </nav>
@@ -61,6 +85,15 @@
           <label for="description">
             <h4>Description: </h4>
             <textarea oninput="auto_grow(this)" name="description" id="description">Please view a product</textarea>
+          </label>
+          <label class="product_size">
+            <h4>Product Size (In centimeters)</h4>
+            <h3>Length:</h3>
+            <input type="number" id= "product_length" placeholder="Length" min="1" />
+            <h3>Width:</h3>
+            <input type="number" id= "product_width" placeholder="Width" min="1" />
+            <h3>Height:</h3>
+            <input type="number" id= "product_height" placeholder="Height" min="1" />
           </label>
           <label for="quantity">
             <h4>Quantity: </h4>
