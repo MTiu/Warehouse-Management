@@ -197,6 +197,7 @@
             <p>View</p>
           </a>
         </div>
+        <% if(user.level == 1 || user.level == 3){ %>
         <div class="image-container">
           <a href="/logs">
             <img src="" alt="" />
@@ -209,11 +210,18 @@
             <p>Users</p>
           </a>
         </div>
+        <% } %>
         <div class="image-container">
-          <a href="/profile/<%= user.id %>">
+          <a href="/profile">
             <img src="" alt="" />
-            <input type="hidden" id="user_id" value = <%= user.id %> >
+            <input type="hidden" id="user_level" value = <%= user.level %> >
             <p>Profile</p>
+          </a>
+        </div>
+        <div class="image-container">
+          <a href="/logout" style="color: red;">
+            <img src="" alt="" />
+            <p >Logout</p>
           </a>
         </div>
       </div>
@@ -265,7 +273,7 @@
         </div>
         <div id="lower">
           <div id="lower-left">
-            <h1>List of Quadrants <button id="add_quadrant">Add Quadrant</button> <button id="select_all_button">Select all</button> <button id="deselect_button">Clear Selection</button></h1>
+            <h1>List of Quadrants <% if(user.level == 1 || user.level == 3){ %> <button id="add_quadrant">Add Quadrant</button> <% } %> <button id="select_all_button">Select all</button> <button id="deselect_button">Clear Selection</button></h1>
             <div id="quadrant_list"></div>
           </div>
           <div id="lower-right">

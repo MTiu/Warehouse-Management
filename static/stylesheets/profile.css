@@ -1,0 +1,337 @@
+* {
+    /* outline: 1px solid red; */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body > .container {
+    display: flex;
+    font-family: "Lato", sans-serif;
+  }
+
+  h2 *{
+    vertical-align: middle;
+  }
+
+  h2 select{
+    background-color: darkslategray;
+    color: white;
+    padding: 10px;
+    border: none;
+  }
+
+  nav {
+    background-color:  #262626;
+    height: 100vh;
+    padding: 20px;
+    width: max-content;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  nav *{
+    user-select: none;
+  }
+
+  nav .image_container .selected{
+    font-weight: bolder;
+    color: skyblue; 
+    cursor:default; 
+    pointer-events: none; 
+    user-select: none;
+  }
+  nav .image-container .selected p{
+    font-size: 1.4rem;
+  }
+    nav .image_container a {
+      color: white;
+      font-size: 19px;
+    }
+  #main {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    background-color: teal;
+  }
+    #main > .container {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 95%;
+    }
+      #main > .container > .top {
+        width: 20%;
+        height: 8%;
+        padding: 15px;
+        border: 1px solid black;
+        border-radius: 10px;
+        background-color: #262626;
+        text-align: center;
+      }
+        #addButton {
+            font-weight: bold;
+            background-color: skyblue;
+            border: 1px solid skyblue;
+            border-radius: 10px;
+            padding: 10px;
+        }
+        #addButton:hover {
+            cursor: pointer;
+            opacity: 0.5;
+        }
+
+      #main > .container .bottom {
+        max-height: 100vh;
+        height: 100%;
+        border: 1px solid black;
+        border-radius: 10px;
+        padding: 50px;
+        background-color: #262626;
+        overflow-y: hidden;
+      }
+        #main > .container .bottom > h2 {
+          color: white;
+          margin-bottom: 10px;
+          display: inline-block;
+        }
+        #main > .container .bottom > table {
+          max-height: 10%;
+          /* display: block; */
+          width: 100%;
+          border-collapse: collapse;
+          border-radius: 10px;
+          border-style: hidden;
+          background-color: lightgray;
+        }
+          #main > .container .bottom > table th {
+            padding: 10px 20px;
+            font-size: 19px;
+            background-color: darkslategray;
+            color: white;
+            width: auto;
+          }
+          #main > .container .bottom > table .view_product {
+            text-align: center;
+            width: 20px;
+            cursor: pointer;
+          }
+          #main > .container .bottom > table td {
+            padding: 10px 20px;
+          }
+          #main > .container .bottom > table tr:nth-child(even) {
+            background-color: white;
+          }
+          #main > .container .bottom > th, td {
+              border: 1px solid black;
+              padding: 8px;
+              text-align: center;
+          }
+
+  img{
+    width: 100px;
+  }
+
+  
+#search {
+  position: relative;
+  width: 190px;
+  margin: 1% 2% 2% 2%;
+  display: inline-block;
+}
+
+#search input {
+  background-color: transparent;
+  border: 0;
+  border-bottom: 2px white solid;
+  display: block;
+  width: 100%;
+  padding: 15px 0;
+  font-size: 18px;
+  color: white;
+}
+
+#search input:focus,
+#search input:valid {
+  outline: 0;
+  border-bottom-color: white;
+}
+
+#search label {
+  position: absolute;
+  top: 15px;
+  left: 0;
+  pointer-events: none;
+}
+
+#search label span {
+  display: inline-block;
+  font-size: 18px;
+  min-width: 5px;
+  color: white;
+  transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+#search input:focus + label span,
+#search input:valid + label span {
+  color: white;
+  transform: translateY(-20px);
+}
+
+.remove_log, .edit_log{
+  cursor: pointer;
+}
+
+.edit-container{
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 620px;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 20px;
+    z-index: 100;
+    background-color: #262626;
+    color: white;
+}
+
+.edit-container form{
+    border: 1px solid teal;
+    border-radius: 20px;
+    padding: 5%;
+    margin-top: 1%
+}
+
+.edit-container h1{
+    margin-bottom: 2%
+}
+
+.edit-container form label{
+    width: 100%;
+}
+
+.edit-container form label input, .edit-container form label select{
+    width: 95%;
+    font-size: 1.2rem;
+    padding: 10px;
+    margin-bottom: 10%;
+}
+
+.edit-container form #submitButton{
+    margin-top: 5%;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid teal;
+    border-radius: 20px;
+    background-color: teal;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.edit-container form #submitButton:hover{
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.mask {
+  background-color: black;
+  opacity: 0.4;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 90;
+  display: none;
+}
+
+#closeButton{
+  position: relative;
+  left: 95%;
+  background-color: transparent;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.bottom h1, #editForm{
+    color: white;
+}
+
+.bottom h1{
+    font-size: 3.5rem;
+    border-bottom: 1px solid white;
+    margin-bottom: 2%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#main .container .bottom h2{
+    display: block;
+    font-size: 2.5rem;
+    margin: 2% 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#editForm h3{
+    font-size: 2rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#main .container .bottom #editForm{
+    margin-top: 5%;
+    padding: 20px;
+    border: 1px solid teal;
+    border-radius: 10px;
+}
+
+#main .container .bottom #editForm h2{
+    margin: 2% 0 1% 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#main .container .bottom #editForm label{
+    display: block;
+    margin: 4% 0;
+}
+
+#main .container .bottom #editForm label input{
+    display: block;
+    width: 100%;
+    padding: 10px;
+    height: 45px;
+    margin: 1% 0;
+    font-size: 2rem;
+}
+
+#submitButton{
+    background-color: teal;
+    color: white;
+    display: block;
+    width: 100%;
+    padding: 10px;
+    height: 45px;
+    margin-top: 5%;
+    font-size: 1.5rem;
+    font-weight: bolder;
+    border: none;
+}
+
+#submitButton:hover{
+    cursor: pointer;
+    opacity: 0.5;
+}

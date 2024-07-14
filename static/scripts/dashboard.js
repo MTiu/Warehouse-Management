@@ -68,6 +68,7 @@ function updateProductList(products) {
 }
 
 function updateQuadrantList(data) {
+  let user_level = $('#user_level').val();
   let quadrantHTML = "";
   let updateQuadrantHTML = "";
   let addQuadrantHTML = "<h4>Select Quadrant:</h4>";
@@ -77,8 +78,8 @@ function updateQuadrantList(data) {
       <input class="quadrant_checkbox" checked type="checkbox" name="quadrant" value="${quadrant.id}" id="quadrant${quadrant.id}" /> <h4>${quadrant.name}</h4>
       <h4>Est. Free Space: ${calculateFreeSpacePercentage(quadrant.free_space, quadrant.total_space)}%</h4>
       <div>
-        ${quadrant.id > 8 ? `<button class="delete quadrant_button" value="${quadrant.id}">Delete</button>` : ''}
-        <button class="update quadrant_button" quadrant-id="${quadrant.id}" quadrant-name="${quadrant.name}" quadrant-total-space="${quadrant.total_space}" quadrant-free-space="${quadrant.free_space}" quadrant-length="${quadrant.length}" quadrant-width="${quadrant.width}" quadrant-height="${quadrant.height}">Update</button>
+        ${(quadrant.id > 8 && (user_level == 1 || user_level == 3)) ? `<button class="delete quadrant_button" value="${quadrant.id}">Delete</button>` : ''}
+        ${(user_level == 1 || user_level == 3) ? `<button class="update quadrant_button" quadrant-id="${quadrant.id}" quadrant-name="${quadrant.name}" quadrant-total-space="${quadrant.total_space}" quadrant-free-space="${quadrant.free_space}" quadrant-length="${quadrant.length}" quadrant-width="${quadrant.width}" quadrant-height="${quadrant.height}">Update</button>` : ""}
       </div>
     </label>
     `;

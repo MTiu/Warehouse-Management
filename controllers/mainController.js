@@ -10,6 +10,11 @@ class MainController {
         res.render('../views/main/login');
     }
 
+    async logout(req, res){
+        res.redirect('/');
+        req.session.destroy();
+    }
+
     async logProc(req, res) {
         const USER = await db.getUser(req);
         if(typeof USER == "string"){
@@ -52,10 +57,12 @@ class MainController {
         const PRODUCTS = await db.getProducts();
         const QUADRANTS = await db.getQuadrants();
         const CURRENT_YEAR = new Date().getFullYear();
+        const USER = req.session.user;
         const DATA = {
             products: PRODUCTS,
             quadrants: QUADRANTS,
-            current_year: CURRENT_YEAR
+            current_year: CURRENT_YEAR,
+            user: USER
         };
         
         res.render('../views/main/view', DATA);
@@ -63,12 +70,17 @@ class MainController {
 
     async logs(req, res){
 
-        if(!req.session.user){
-            res.redirect('/');
+        if(!req.session.user || req.session.user.level == 2){
+            res.redirect('/dashboard');
             return;
         }
 
-        res.render('../views/main/log');
+        const USER = req.session.user;
+        const DATA = {
+            user: USER
+        };
+
+        res.render('../views/main/log', DATA);
     }
 
     async searchLogs(req, res){
@@ -85,12 +97,93 @@ class MainController {
         }
     }
 
+    async editLog(req, res){
+        try {
+            await db.editLog(req);
+            res.json({status: 0});
+        } catch(e) {
+            res.json({status: 1});
+        }
+    }
+
+    async searchUsers(req, res){
+        const LOGS = await db.searchUsers(req);
+        res.json(LOGS);
+    }
+
+    async addUser(req, res){
+        try {
+            const PASSWORD = await db.addUser(req);
+            res.json({status: 0, password: PASSWORD});
+        } catch(e) {
+            res.json({status: 1});
+        }
+    }
+
+    async resetUser(req, res){
+        try {
+            const PASSWORD = await db.resetUser(req);
+            res.json({status: 0, password: PASSWORD});
+        } catch(e) {
+            res.json({status: 1});
+        }
+    }
+
+    async removeUser(req, res){
+        try {
+            await db.removeUser(req);
+            res.json({status: 0});
+        } catch(e) {
+            res.json({status: 1});
+        }
+    }
+
+    async editUser(req, res){
+        try {
+            await db.editUser(req);
+            res.json({status: 0});
+        } catch(e) {
+            res.json({status: 1});
+        }
+    }
+
     async users(req, res){
-        res.render('../views/main/users');
+
+        if(!req.session.user || req.session.user.level == 2){
+            res.redirect('/dashboard');
+            return;
+        }
+        
+        const USER = req.session.user;
+        const DATA = {
+            user: USER
+        };
+
+        res.render('../views/main/users', DATA);
     }
 
     async profile(req, res){
-        res.render('../views/main/profile');
+
+        if(!req.session.user){
+            res.redirect('/');
+            return;
+        } 
+
+        const USER = req.session.user;
+        const DATA = {
+            user: USER
+        };
+
+        res.render('../views/main/profile', DATA);
+    }
+
+    async changePass(req, res){
+        try {
+            const DATA = await db.changePass(req,req.session.user);
+            res.json({status: 0, message:DATA});
+        } catch(e) {
+            res.json({status: 1});
+        }
     }
 
     async getQuadrantProducts(req, res) {

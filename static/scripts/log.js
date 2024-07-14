@@ -12,6 +12,7 @@ function loadLogs(){
 
 function updateLogList(logs) {
     let html = "";
+    let user = $('#user_level').val();
     logs.forEach(log => {
         html += `
             <tr>
@@ -22,10 +23,14 @@ function updateLogList(logs) {
                 <td>${log.quantity}</td>
                 <td>${dateConvert(log.created_at)}</td>
                 <td>${dateConvert(log.updated_at)}</td>
+        `;
+        if(user == 1){
+            html += `
                 <td class="edit_log" log-id="${log.id}" log-user="${log.username}" product-id="${log.product_id}" product-name="${log.product_name}" log-operation="${log.operation}" product-quantity="${log.quantity}">✏️</td>
                 <td class="remove_log" log-id="${log.id}">❌</td>
             </tr>
         `;
+    }
     });
     
     if(!logs.length) {
@@ -77,7 +82,11 @@ $('#editForm').on('submit', function(event) {
     if (this.checkValidity()) {
         event.preventDefault(); 
         var formData = $(this).serialize();
-        console.log(formData);
+        
+        $.post('/editLog', formData, function(res) {
+            loadLogs();
+        });
+
         $('.edit-container').hide();
         $('.mask').hide();
     }

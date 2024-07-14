@@ -3,9 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Profile</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="stylesheets/profile.css">
+    <link rel="icon" href="/img/Warehome.png" type="image/icon type">
 </head>
 <body>
-    LOL
+    <div class="container">
+        <nav>
+          <div class="image-container">
+            <a href="/dashboard">
+              <img src="/img/Warehome.png" alt="" />
+            </a>
+          </div>
+          <div class="image_container">
+            <a href="/dashboard">
+              <img src="" alt="" />
+              <p>Dashboard</p>
+            </a>
+          </div>
+          <div class="image_container">
+            <a href="/view">
+              <img src="" alt="" />
+              <p>View</p>
+            </a>
+          </div>
+          <% if(user.level == 1 || user.level == 3) { %>
+          <div class="image_container">
+            <a href="/logs">
+              <img src="" alt="" />
+              <p>Logs</p>
+            </a>
+          </div>
+          <div class="image_container">
+            <a href="/users">
+              <img src="" alt="" />
+              <p>Users</p>
+            </a>
+          </div>
+          <% } %>
+          <div class="image_container">
+            <a href="/profile" class="selected">
+              <img src="" alt="" />
+              <input type="hidden" id="user_level" value = <%= user.level %> >
+              <p>Profile</p>
+            </a>
+          </div>
+          <div class="image_container">
+            <a href="/logout" style="color: red;">
+              <img src="" alt="" />
+              <p>Logout</p>
+            </a>
+          </div>
+        </nav>
+        <div id="main">
+            <div class="container">
+                <div class="bottom">
+                    <h1>Profile Information</h1>
+                    <h2>Full name: <%= user.first_name %> <%= user.last_name %></h2>
+                    <h2>Username: <%= user.username %></h2>
+                    <h2>Role: 
+                        <% if(user.level == 1) { %>
+                            Admin
+                        <% } else if(user.level == 2) { %>
+                            User
+                        <% } else if(user.level == 3) { %>
+                            Moderator
+                        <% } %>
+                    </h2>
+                    <form id="editForm">
+                        <h2>Change Password</h2>
+                        <label>
+                            <h3>Old Password</h3>
+                            <input type="password" placeholder="Enter Password" name="old_password" required> 
+                        </label>
+                        <label>
+                            <h3>New Password</h3>
+                            <input type="password" placeholder="Enter Password" name="new_password" required> 
+                        </label>
+                        <label>
+                            <h3>Confirm Password</h3>
+                            <input type="password" placeholder="Enter Password" name="confirm_password" required> 
+                        </label>
+                        <input type="submit" id="submitButton" value="Change">
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script src="/scripts/profile.js"></script>
 </body>
 </html>

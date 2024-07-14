@@ -26,11 +26,19 @@ const mainController = require("../controllers/mainController");
  */
 
 mainRoutes.get("/", mainController.login);
+mainRoutes.get("/logout", mainController.logout);
 mainRoutes.post("/logProc", mainController.logProc);
 mainRoutes.get("/logs", mainController.logs);
 mainRoutes.post("/logSearch", mainController.searchLogs);
 mainRoutes.post("/removeLog", mainController.removeLog);
+mainRoutes.post("/editLog", mainController.editLog);
 mainRoutes.get("/users", mainController.users);
+mainRoutes.post("/userSearch", mainController.searchUsers);
+mainRoutes.post("/addUser", mainController.addUser);
+mainRoutes.post("/resetUser", mainController.resetUser);
+mainRoutes.post("/removeUser", mainController.removeUser);
+mainRoutes.post("/editUser", mainController.editUser);
+mainRoutes.post("/changePass", mainController.changePass);
 mainRoutes.get("/profile", mainController.profile);
 mainRoutes.get("/dashboard", mainController.dashboard);
 mainRoutes.get("/view", mainController.view);

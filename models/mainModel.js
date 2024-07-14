@@ -1,10 +1,5 @@
 const uniq = require('../static/lib/universal-query/universalQuery');
 
-function formatDateForDB(date) {
-  const dateObject = new Date(date);
-  return dateObject.toISOString().slice(0, 19).replace('T', ' ');
-}
-
 class MainModel {
   getProducts() {
     return uniq.queryAll("SELECT * FROM products");
@@ -60,6 +55,84 @@ class MainModel {
       uniq.queryNone(`DELETE FROM logs WHERE ID = ${LOG_ID}`);
     }
     return;
+  }
+
+  async editLog(req){
+    const LOG_ID = req.body.log_id;
+    const PRODUCT_NAME = req.body.product_name;
+    const QUANTITY = req.body.quantity;
+    const OPERATION = req.body.operation;
+    if(LOG_ID && PRODUCT_NAME && QUANTITY && OPERATION){
+      uniq.queryNone(`UPDATE logs SET product_name = "${PRODUCT_NAME}", quantity = ${QUANTITY}, operation = "${OPERATION}", updated_at = NOW() WHERE id = ${LOG_ID};`);
+    }
+    return;
+  }
+
+  async searchUsers(req){
+    const NAME = req.body.name.replace(/[\\$'"]/g, "\\$&");
+    return uniq.queryAll(`SELECT * FROM users WHERE '${NAME}' = '' OR username LIKE '%${NAME}%' ORDER BY id;`);
+  }
+
+  async addUser(req){
+    const FIRST_NAME = req.body.first_name.replace(/[\\$'"]/g, "\\$&");
+    const LAST_NAME = req.body.last_name.replace(/[\\$'"]/g, "\\$&");
+    const USERNAME = req.body.username.replace(/[\\$'"]/g, "\\$&");
+    const PASSWORD = Math.floor(Math.random() * 9000) + 1000;
+    const LEVEL = req.body.level;
+
+    if(FIRST_NAME && LAST_NAME && USERNAME && LEVEL){
+      uniq.queryNone(`INSERT INTO users (first_name, last_name, level, username, password, created_at, updated_at)
+                      VALUES ("${FIRST_NAME}", "${LAST_NAME}", ${LEVEL}, "${USERNAME}", "${PASSWORD}", NOW(), NOW());
+        `)
+    }
+    return PASSWORD;
+  }
+
+  async resetUser(req){
+    const USER_ID = req.body.ID;
+    const PASSWORD = Math.floor(Math.random() * 9000) + 1000;
+    if(USER_ID){
+      uniq.queryNone(`UPDATE users SET password = ${PASSWORD} WHERE id = ${USER_ID}`);
+    }
+    return PASSWORD;
+  }
+
+  async removeUser(req){
+    const USER_ID = req.body.ID;
+
+    if(USER_ID){
+      uniq.queryNone(`DELETE FROM users WHERE ID = ${USER_ID}`);
+    }
+    return;
+  }
+
+  async editUser(req){
+    const USER_ID = req.body.user_id
+    const FIRST_NAME = req.body.first_name.replace(/[\\$'"]/g, "\\$&");
+    const LAST_NAME = req.body.last_name.replace(/[\\$'"]/g, "\\$&");
+    const USERNAME = req.body.username.replace(/[\\$'"]/g, "\\$&");
+    let LEVEL = req.body.level;
+    if(USER_ID == 1){
+      LEVEL = 1;
+    } 
+
+    if(USER_ID, FIRST_NAME, LAST_NAME, USERNAME, LEVEL){
+      uniq.queryNone(`UPDATE users SET first_name = "${FIRST_NAME}", last_name = "${LAST_NAME}", username = "${USERNAME}", level = ${LEVEL} WHERE id = ${USER_ID};`);
+    }
+    return;
+  }
+
+  async changePass(req,user){
+    const NEW_PASSWORD = req.body.new_password.replace(/[\\$'"]/g, "\\$&");
+    const OLD_PASSWORD = req.body.old_password.replace(/[\\$'"]/g, "\\$&");
+    const CURRENT_PASSWORD = user.password.replace(/[\\$'"]/g, "\\$&");
+    if(OLD_PASSWORD === CURRENT_PASSWORD){
+      await uniq.queryNone(`UPDATE users SET password = "${NEW_PASSWORD}" WHERE id = ${user.id};`);
+      return "Change password is successful";
+    } else {
+      return "Old Password is wrong!";
+    }
+    
   }
 
   getTopProducts() {

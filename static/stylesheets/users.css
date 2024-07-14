@@ -127,7 +127,7 @@ nav {
         #main > .container .bottom > th, td {
             border: 1px solid black;
             padding: 8px;
-            text-align: left;
+            text-align: center;
         }
 
         img{
@@ -137,7 +137,7 @@ nav {
         
       #search {
         position: relative;
-        width: 190px;
+        width: 210px;
         margin: 1% 2% 2% 2%;
         display: inline-block;
       }
@@ -180,9 +180,66 @@ nav {
         transform: translateY(-20px);
       }
 
+      .remove_user, .edit_user{
+        cursor: pointer;
+      }
 
+    
+.edit-container, .add-container{
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 750px;
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 20px;
+  z-index: 100;
+  background-color: #262626;
+  color: white;
+}
 
+.edit-container form, .add-container form{
+  border: 1px solid teal;
+  border-radius: 20px;
+  padding: 5%;
+  margin-top: 1%
+}
 
+.edit-container h1, .add-container h1{
+  margin-bottom: 2%
+}
+
+.edit-container form label, .add-container form label{
+  width: 100%;
+}
+
+.edit-container form label input, .edit-container form label select, 
+.add-container form label input, .add-container form label select{
+  width: 95%;
+  font-size: 1.2rem;
+  padding: 10px;
+  margin-bottom: 10%;
+}
+
+.edit-container form #submitEditButton, .add-container form #submitAddButton{
+  margin-top: 5%;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid teal;
+  border-radius: 20px;
+  background-color: teal;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.edit-container form #submitEditButton:hover, .add-container form #submitAddButton:hover{
+  cursor: pointer;
+  opacity: 0.5;
+}
 
 .mask {
   background-color: black;
@@ -196,7 +253,7 @@ nav {
   display: none;
 }
 
-#closeButton{
+.closeButton{
   position: relative;
   left: 95%;
   background-color: transparent;
@@ -204,4 +261,14 @@ nav {
   color: white;
   font-size: 1.5rem;
   cursor: pointer;
+}
+
+.reset_password{
+  cursor: pointer;
+  background-color: darkred;
+  color: white;
+}
+
+.reset_password:hover{
+  opacity: 0.5;
 }

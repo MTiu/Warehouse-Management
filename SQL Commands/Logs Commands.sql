@@ -7,6 +7,8 @@ SELECT * FROM users;
 ALTER TABLE products AUTO_INCREMENT = 1;
 DELETE FROM products;
 
+
+
 SELECT 
     MONTH(created_at) AS month,
     SUM(CASE WHEN operation = 'Add' THEN quantity ELSE 0 END) AS total_adds,
@@ -161,10 +163,10 @@ UPDATE quadrants SET free_space = 125 WHERE id = 54;
 UPDATE logs SET user_id = 1 WHERE user_id = 0;
 
 SELECT 
+	l.id,
     COALESCE(p.id, 0) AS product_id,
-    COALESCE(p.name, 'Removed Product') AS product_name,
-    COALESCE(u.first_name, 'Unknown') AS first_name,
-    COALESCE(u.last_name, 'User') AS last_name,
+    l.product_name AS product_name,
+    l.username,
     l.operation,
     l.quantity,
     l.created_at,
@@ -175,8 +177,11 @@ LEFT JOIN
     products p ON l.product_id = p.id
 LEFT JOIN 
     users u ON l.user_id = u.id
+WHERE '' = '' OR p.name LIKE '%box%'
 ORDER BY 
     p.id DESC;
-    
+
+UPDATE logs SET product_name = "TEST PRODUCTS(1)", quantity = 10, operation = "Add", updated_at = NOW() WHERE id = 87;
+
     SELECT * FROM logs;
     SELECT * FROM products where id = 76;
