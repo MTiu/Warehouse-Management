@@ -282,85 +282,106 @@ class MainModel {
     return 1;
   }
 
-  async updateProduct(req,user) {
-    const PRODUCT_ID = req.body.product_id;
-    const NEW_QUADRANT_ID = parseInt(req.body.quadrant_id);
-    const NEW_PRODUCT_NAME = req.body.product_name;
-    const NEW_PRODUCT_QUANTITY = parseInt(req.body.product_quantity);
-    const PRODUCT_DESCRIPTION = req.body.product_description;
-    const NEW_PRODUCT_LENGTH = parseFloat(req.body.length);
-    const NEW_PRODUCT_WIDTH = parseFloat(req.body.width);
-    const NEW_PRODUCT_HEIGHT = parseFloat(req.body.height);
-    const NEW_PRODUCT_VOLUME = Math.round(NEW_PRODUCT_LENGTH * NEW_PRODUCT_WIDTH * NEW_PRODUCT_HEIGHT);
+  async updateProduct(req, user) {
+    const {
+      product_id,
+      quadrant_id,
+      product_name,
+      product_quantity,
+      product_description,
+      length,
+      width,
+      height
+    } = req.body;
   
-    if (!(PRODUCT_ID && NEW_QUADRANT_ID && NEW_PRODUCT_NAME && !isNaN(NEW_PRODUCT_QUANTITY) && PRODUCT_DESCRIPTION)) {
+    const newQuadrantId = parseInt(quadrant_id);
+    const newQuantity = parseInt(product_quantity);
+    const newLength = parseFloat(length);
+    const newWidth = parseFloat(width);
+    const newHeight = parseFloat(height);
+    const newVolume = Math.round(newLength * newWidth * newHeight);
+  
+    if (!(product_id && newQuadrantId && product_name && !isNaN(newQuantity) && product_description)) {
       return 1; // Missing required fields
     }
   
-    // Fetch current product details
-    const [PRODUCT_CURRENT_RESULT] = await uniq.queryAll(`SELECT length, width, height, quantity, quadrant_id FROM products WHERE id = ${PRODUCT_ID}`);
+    try {
+    // Start a transaction
+    await uniq.queryNone('BEGIN');
+
+    // Fetch current product details and quadrant free space in one query
+    const [productAndQuadrantResult] = await uniq.queryAll(`
+      SELECT p.length, p.width, p.height, p.quantity, p.quadrant_id,
+             q.free_space AS new_quadrant_free_space,
+             (SELECT free_space FROM quadrants WHERE id = p.quadrant_id) AS current_quadrant_free_space
+      FROM products p
+      JOIN quadrants q ON q.id = ?
+      WHERE p.id = ?
+    `, [newQuadrantId, product_id]);
   
-    const PRODUCT_CURRENT_QUANTITY = parseInt(PRODUCT_CURRENT_RESULT.quantity);
-    const PRODUCT_CURRENT_QUADRANT_ID = parseInt(PRODUCT_CURRENT_RESULT.quadrant_id);
-    const PRODUCT_CURRENT_LENGTH = parseFloat(PRODUCT_CURRENT_RESULT.length);
-    const PRODUCT_CURRENT_WIDTH = parseFloat(PRODUCT_CURRENT_RESULT.width);
-    const PRODUCT_CURRENT_HEIGHT = parseFloat(PRODUCT_CURRENT_RESULT.height);
-    const PRODUCT_CURRENT_VOLUME = Math.round(PRODUCT_CURRENT_LENGTH * PRODUCT_CURRENT_WIDTH * PRODUCT_CURRENT_HEIGHT);
+      const {
+        length: currentLength,
+        width: currentWidth,
+        height: currentHeight,
+        quantity: currentQuantity,
+        quadrant_id: currentQuadrantId,
+        new_quadrant_free_space,
+        current_quadrant_free_space
+      } = productAndQuadrantResult;
   
-    const quantityDifference = NEW_PRODUCT_QUANTITY - PRODUCT_CURRENT_QUANTITY;
+      const currentVolume = Math.round(currentLength * currentWidth * currentHeight);
+      const quantityDifference = newQuantity - currentQuantity;
+      const totalOccupiedSpace = newVolume * newQuantity - (currentQuadrantId === newQuadrantId ? currentVolume * currentQuantity : 0);
   
-    // Calculate total occupied space change
-    let TOTAL_OCCUPIED_SPACE = NEW_PRODUCT_VOLUME * NEW_PRODUCT_QUANTITY;
+      if (new_quadrant_free_space - totalOccupiedSpace < 0) {
+        await uniq.queryNone('ROLLBACK');
+        return true; // Not enough free space in new quadrant
+      }
   
-    if (PRODUCT_CURRENT_QUADRANT_ID === NEW_QUADRANT_ID) {
-      // No change in quadrant, adjust occupied space based on quantity difference
-      TOTAL_OCCUPIED_SPACE -= PRODUCT_CURRENT_VOLUME * PRODUCT_CURRENT_QUANTITY;
-    }
-  
-    // Fetch current and new quadrant free space
-    const [NEW_QUADRANT_FREE_SPACE_RESULT] = await uniq.queryAll(`SELECT free_space FROM quadrants WHERE id = ${NEW_QUADRANT_ID}`);
-    const NEW_QUADRANT_FREE_SPACE = parseFloat(NEW_QUADRANT_FREE_SPACE_RESULT.free_space);
-  
-    if (NEW_QUADRANT_FREE_SPACE - TOTAL_OCCUPIED_SPACE < 0) {
-      return true; // Not enough free space in new quadrant
-    }
-  
-    // Update the product
-    await uniq.queryNone(`
-      UPDATE products SET 
-      quadrant_id = "${NEW_QUADRANT_ID}", 
-      name = "${NEW_PRODUCT_NAME}", 
-      quantity = ${NEW_PRODUCT_QUANTITY}, 
-      description = "${PRODUCT_DESCRIPTION}", 
-      length = ${NEW_PRODUCT_LENGTH}, 
-      width = ${NEW_PRODUCT_WIDTH}, 
-      height = ${NEW_PRODUCT_HEIGHT} 
-      WHERE id = ${PRODUCT_ID}
-    `);
+      // Update the product
+      await uniq.queryNone(`
+        UPDATE products SET 
+          quadrant_id = ?, 
+          name = ?, 
+          quantity = ?, 
+          description = ?, 
+          length = ?, 
+          width = ?, 
+          height = ? 
+        WHERE id = ?
+      `, [newQuadrantId, product_name, newQuantity, product_description, newLength, newWidth, newHeight, product_id]);
   
     // Log quantity change if applicable
     if (quantityDifference !== 0) {
       const operation = quantityDifference > 0 ? 'Add' : 'Subtract';
       await uniq.queryNone(`
         INSERT INTO logs (user_id, username, product_id, product_name, operation, quantity, created_at, updated_at) 
-        VALUES (${user.id}, "${user.username}" , ${PRODUCT_ID}, "${NEW_PRODUCT_NAME}", '${operation}', ${Math.abs(quantityDifference)}, NOW(), NOW())
-      `);
+        VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())
+      `, [user.id, user.username, product_id, product_name, operation, Math.abs(quantityDifference)]);
     }
   
-    // Update free space in previous quadrant if changed
-    if (PRODUCT_CURRENT_QUADRANT_ID !== NEW_QUADRANT_ID) {
-      const [PREV_QUADRANT_FREE_SPACE_RESULT] = await uniq.queryAll(`SELECT free_space FROM quadrants WHERE id = ${PRODUCT_CURRENT_QUADRANT_ID}`);
-      const PREV_QUADRANT_FREE_SPACE = parseFloat(PREV_QUADRANT_FREE_SPACE_RESULT.free_space) + (PRODUCT_CURRENT_VOLUME * PRODUCT_CURRENT_QUANTITY);  
-      await uniq.queryNone(`UPDATE quadrants SET free_space = ${PREV_QUADRANT_FREE_SPACE} WHERE id = ${PRODUCT_CURRENT_QUADRANT_ID}`);
+      // Update free space in quadrants
+      await uniq.queryNone(`
+        UPDATE quadrants
+        SET free_space = CASE
+          WHEN id = ? THEN free_space - ?
+          WHEN id = ? THEN free_space + ?
+          ELSE free_space
+        END
+        WHERE id IN (?, ?)
+      `, [newQuadrantId, totalOccupiedSpace, currentQuadrantId, currentVolume * currentQuantity, newQuadrantId, currentQuadrantId]);
+  
+      // Commit the transaction
+      await uniq.queryNone('COMMIT');
+  
+      return 0; // Success
+    } catch (error) {
+      await uniq.queryNone('ROLLBACK');
+      console.error('Error updating product:', error);
+      return 2; // Database error
     }
-  
-    // Update free space in new quadrant
-    const UPDATED_NEW_QUADRANT_FREE_SPACE = NEW_QUADRANT_FREE_SPACE - TOTAL_OCCUPIED_SPACE;
-    await uniq.queryNone(`UPDATE quadrants SET free_space = ${UPDATED_NEW_QUADRANT_FREE_SPACE} WHERE id = ${NEW_QUADRANT_ID}`);
-  
-    return 0; // Success
   }
-  
+
   async updateQuadrant(req) {
     const QUADRANT_ID = req.body.id;
     const QUADRANT_NAME = req.body.name;
