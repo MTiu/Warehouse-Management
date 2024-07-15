@@ -225,7 +225,7 @@ class MainController {
 
     async addProduct(req, res) {
         try {
-            const ERRORS = await db.addProduct(req);
+            const ERRORS = await db.addProduct(req, req.session.user);
             const DATA = {
                 errors: ERRORS
             }
@@ -246,7 +246,7 @@ class MainController {
 
     async removeProduct(req, res) {
         try {
-            await db.removeProduct(req);
+            await db.removeProduct(req,req.session.user);
             res.json({status: 0});
         } catch(e) {
             res.json({status: 1});
@@ -264,7 +264,7 @@ class MainController {
 
     async updateProduct(req, res) {
         try {
-            const ERRORS = await db.updateProduct(req);
+            const ERRORS = await db.updateProduct(req,req.session.user);
             const DATA = {
                 errors: ERRORS
             }

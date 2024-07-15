@@ -193,8 +193,7 @@ class MainModel {
     return uniq.queryAll(`SELECT products.*, q.name AS quadrant_name FROM products LEFT JOIN quadrants as q ON products.quadrant_id = q.id WHERE products.quadrant_id IN(${ QUADRANT_LIST }) AND products.name LIKE "%${ QUERY_STRING }%" ORDER BY products.quadrant_id;`);
   }
 
-  async addProduct(req) {
-    const USER = req.body.user;
+  async addProduct(req,user) {
     const QUADRANT_ID = req.body.quadrant_id;
     const [QUADRANT_FREE_SPACE_RESULT] = await uniq.queryAll(`SELECT free_space FROM quadrants WHERE id = ${QUADRANT_ID}`);
     const QUADRANT_FREE_SPACE = QUADRANT_FREE_SPACE_RESULT.free_space;
@@ -209,18 +208,17 @@ class MainModel {
     const PRODUCT_VOLUME = Math.round(LENGTH * WIDTH * HEIGHT);
     const TOTAL_OCCUPIED_SPACE = PRODUCT_VOLUME * QUANTITY;
     const NEW_FREE_SPACE = QUADRANT_FREE_SPACE - TOTAL_OCCUPIED_SPACE;
-
-    if (QUADRANT_ID && NAME && QUANTITY && DESCRIPTION) {
+    if (QUADRANT_ID && NAME && QUANTITY) {
         if (NEW_FREE_SPACE < 0) {
             return true;
         }
-        await uniq.queryNone(`INSERT INTO products (quadrant_id, name, description, quantity, length, width, height, created_at, updated_at) VALUES (${QUADRANT_ID}, "${NAME}", "${DESCRIPTION}", ${QUANTITY}, ${LENGTH}, ${WIDTH}, ${HEIGHT}, NOW(), NOW())`);
-        await uniq.queryNone(`UPDATE quadrants SET free_space = ${NEW_FREE_SPACE}, updated_at = NOW() WHERE id = ${QUADRANT_ID}`);
+        uniq.queryNone(`INSERT INTO products (quadrant_id, name, description, quantity, length, width, height, created_at, updated_at) 
+                        VALUES (${QUADRANT_ID}, "${NAME}", "${DESCRIPTION}", ${QUANTITY}, ${LENGTH}, ${WIDTH}, ${HEIGHT}, NOW(), NOW())`);
+        uniq.queryNone(`UPDATE quadrants SET free_space = ${NEW_FREE_SPACE}, updated_at = NOW() WHERE id = ${QUADRANT_ID}`);
         const [PRODUCT] = await uniq.queryAll(`SELECT id FROM products ORDER BY id DESC LIMIT 1; `);
-        const [USERNAME] = await uniq.queryAll(`SELECT username FROM users WHERE id = "${USER}"`);
-        await uniq.queryNone(`
+        uniq.queryNone(`
           INSERT INTO logs (user_id, username, product_id, product_name, operation, quantity, created_at, updated_at) 
-          VALUES (${USER}, "${USERNAME.username}" , ${PRODUCT.id}, "${NAME}", 'New', ${QUANTITY}, NOW(), NOW())
+          VALUES (${user.id}, "${user.username}" , ${PRODUCT.id}, "${NAME}", 'New', ${QUANTITY}, NOW(), NOW())
         `);
         return 0;
     }
@@ -243,8 +241,7 @@ class MainModel {
     return 1;
   }
 
-  async removeProduct(req) {
-    const USER = req.body.user;
+  async removeProduct(req,user) {
     const PRODUCT_ID = req.body.product_id;
     const PRODUCT_NAME = req.body.product_name;
     const NEW_PRODUCT_QUANTITY = parseInt(req.body.product_quantity);
@@ -261,11 +258,11 @@ class MainModel {
     if(PRODUCT_ID && NEW_QUADRANT_ID) {
       uniq.queryNone(`DELETE FROM products WHERE id = ${ PRODUCT_ID };`);
       uniq.queryNone(`UPDATE quadrants SET free_space = ${NEW_QUADRANT_FREE_SPACE.toFixed(2)} WHERE id = ${NEW_QUADRANT_ID}`);
-      const [USERNAME] = await uniq.queryAll(`SELECT username FROM users WHERE id = "${USER}"`);
       uniq.queryNone(`
         INSERT INTO logs (user_id, username, product_id, product_name, operation, quantity, created_at, updated_at) 
-        VALUES (${USER}, "${USERNAME.username}" , ${PRODUCT_ID}, "${PRODUCT_NAME}", 'Remove', ${NEW_PRODUCT_QUANTITY}, NOW(), NOW())
+        VALUES (${user.id}, "${user.username}" , ${PRODUCT_ID}, "${PRODUCT_NAME}", 'Remove', ${NEW_PRODUCT_QUANTITY}, NOW(), NOW())
       `);
+
       return 0;
 
     }
@@ -285,8 +282,7 @@ class MainModel {
     return 1;
   }
 
-  async updateProduct(req) {
-    const USER = req.body.user;
+  async updateProduct(req,user) {
     const PRODUCT_ID = req.body.product_id;
     const NEW_QUADRANT_ID = parseInt(req.body.quadrant_id);
     const NEW_PRODUCT_NAME = req.body.product_name;
@@ -345,10 +341,9 @@ class MainModel {
     // Log quantity change if applicable
     if (quantityDifference !== 0) {
       const operation = quantityDifference > 0 ? 'Add' : 'Subtract';
-      const [USERNAME] = await uniq.queryAll(`SELECT username FROM users WHERE id = "${USER}"`);
       await uniq.queryNone(`
         INSERT INTO logs (user_id, username, product_id, product_name, operation, quantity, created_at, updated_at) 
-        VALUES (${USER}, "${USERNAME.username}" , ${PRODUCT_ID}, "${NEW_PRODUCT_NAME}", '${operation}', ${Math.abs(quantityDifference)}, NOW(), NOW())
+        VALUES (${user.id}, "${user.username}" , ${PRODUCT_ID}, "${NEW_PRODUCT_NAME}", '${operation}', ${Math.abs(quantityDifference)}, NOW(), NOW())
       `);
     }
   
