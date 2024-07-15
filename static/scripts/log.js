@@ -1,7 +1,34 @@
-function dateConvert(date){
-    const dateObject = new Date(date);
-    const formattedDate = dateObject.toLocaleString();
-    return formattedDate;
+function dateConvert(dateString) {
+    if (!dateString) {
+        console.warn('Received empty date');
+        return 'N/A';
+    }
+
+    try {
+        // Create a Date object directly from the ISO string
+        const dateObject = new Date(dateString);
+
+        // Check if the date is valid
+        if (isNaN(dateObject.getTime())) {
+            throw new Error('Invalid Date object created');
+        }
+
+        const phOptions = { 
+            timeZone: 'Asia/Manila',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+        };
+
+        const result = dateObject.toLocaleString('en-PH', phOptions);
+        return result;
+    } catch (error) {
+        return 'Invalid Date';
+    }
 }
 
 function loadLogs(){
