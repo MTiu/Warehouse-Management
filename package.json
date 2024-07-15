@@ -1,4 +1,11 @@
 {
+  "name": "warehouse-management",
+  "version": "1.0.0",
+  "description": "Warehouse Management System",
+  "main": "app.js", 
+  "scripts": {
+    "start": "node app.js" 
+  },
   "dependencies": {
     "connect-redis": "^6.1.3",
     "crypto": "^1.0.1",
